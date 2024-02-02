@@ -68,27 +68,35 @@ const HomeScreen = () => {
   };
 
   // 업로드 버튼 클릭 시
-  const handleUpload = () => {
-    // 여기에 파일 업로드 로직 추가 (서버에 업로드 등)
-    console.log('File Uploaded:', selectedFile);
-    console.log('Custom File Name:', customFileName);
-    console.log('Selected Folder:', selectedFolder);
+  const handleUpload = async () => {
+    const formData = new FormData();
+    formData.append('file', selectedFile);  // 파일 자체
+    formData.append('originalname', customFileName);  // 파일의 원래 이름
+    formData.append('buffer', selectedFolder);  
   
-    const updatedFiles = { ...uploadedFiles };
-    const updatedFileList = updatedFiles[selectedFolder] ? [...updatedFiles[selectedFolder]] : [];
-    updatedFileList.push({ name: customFileName, icon: '/images/file-icon.png' });
-    updatedFiles[selectedFolder] = updatedFileList;
+    try {
+      const response = await fetch('http://localhost:5000/upload_files', {
+        method: 'POST',
+        body: formData,
+      });
   
-    setUploadedFiles(updatedFiles);
-
+      if (response.ok) {
+        console.log('File uploaded successfully');
+        // 서버에서 반환한 데이터를 처리 (예: 응답에서 업로드된 파일 정보를 얻어와서 상태 업데이트)
+      } else {
+        console.error('File upload failed');
+      }
+    } catch (error) {
+      console.error('Error during file upload:', error);
+    }
   
     // 상태 초기화
     setFileUploadPopupOpen(false);
     setSelectedFile(null);
     setCustomFileName('');
     setSelectedFolder('');
-
   };
+  
 
   const handleNavigateToKeywordResult = () => {
     navigate(`/keyword-result?keyword=${userKeyword}`);

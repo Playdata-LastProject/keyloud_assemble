@@ -19,7 +19,7 @@ mongoose.connect("mongodb://localhost:27017/keyloud");
 const conn = mongoose.connection;
 
 // 파일 업로드 라우트
-app.post("/upload_files", multer().single("files"), async (req, res) => {
+app.post("/upload_files", multer().single("file"), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });

@@ -1,7 +1,6 @@
 const form = document.getElementById("form");
 
 form.addEventListener("submit", submitForm);
-
 function submitForm(e) {
     console.log("test2");
     e.preventDefault();
@@ -10,7 +9,7 @@ function submitForm(e) {
     const formData = new FormData();
     formData.append("name", name.value);
     for (let i = 0; i < files.files.length; i++){
-        formData.append("files", files.files[i]);
+        formData.append("file", files.files[i]);
     }
     fetch("http://localhost:5000/upload_files", {
         method: 'POST',
