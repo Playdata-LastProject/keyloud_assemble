@@ -1,0 +1,18 @@
+.file-details-container {
+    display: flex;
+  }
+  
+  .left-panel, .right-panel {
+    flex: 1;
+  }
+  
+  .media-player, .script-display, .summary-button {
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .script-display {
+    overflow-y: auto; /* 스크립트 내용이 길 경우 스크롤 */
+  }

@@ -1,0 +1,35 @@
+
+  
+  .logo-image {
+    height: 45px;
+    width: auto;
+  }
+  
+  .search-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-input {
+    margin-right: 10px;
+    border: 2px solid #692498; /* 테두리 색상 설정 */
+    border-radius: 10px; /* 둥근 모서리 설정 */
+    width: 400px;
+    padding: 8px; /* 내부 간격 설정 */
+    box-sizing: border-box;
+  }
+  
+  .button-container {
+    display: flex;
+    align-items: center;
+    font-size: small;
+  }
+  
+  .icon-button {
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
+  .login-button {
+    cursor: pointer;
+  }

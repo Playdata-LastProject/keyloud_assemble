@@ -1,0 +1,29 @@
+.keyword-search-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    position: relative;
+  }
+  
+  .keyword-input {
+    padding: 8px;
+    border: 2px solid #692498;
+    border-radius: 10px;
+    margin-right: 10px;
+    width: 200px;
+    transition: width 0.3s ease-in-out;
+  }
+
+  .keyword-input:hover {
+    width:300px;
+  }
+  
+  .search-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 10px;
+    background-color: #692498;
+    color: #ffffff;
+    cursor: pointer;
+  }

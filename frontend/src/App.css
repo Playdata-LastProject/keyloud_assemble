@@ -1,0 +1,97 @@
+.App {
+  text-align: center;
+}
+
+
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.body {
+  background-color: #ffffff;
+  color : #692498;
+}
+
+.button {
+  color: #692498;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.header-container {
+  box-sizing: border-box;
+  order: 1;
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background: #f0f0f0;
+  border-bottom: 2px solid purple;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  top: 0;
+  width:100%; /* 헤더를 맨 위로 배치 */
+}
+
+.main-container {
+  display: flex;
+  flex-direction: row; /* 메뉴와 메인창을 가로로 배열 */
+  flex: 1;
+  margin-top: 60px;
+  padding-left:200px;
+}
+
+.left-menu {
+  width: 220px; /* 메뉴의 고정 너비 설정 */
+  background-color: #f2f2f2; /* 메뉴의 배경색 설정 */
+  position: fixed;
+  left: 0;
+  top: 60px;
+  width: 200px;
+  height: 85%;
+  padding: 10px;
+  z-index: 1;
+  border-right: 2px solid #692498;
+  margin-top: 10px;
+}
+
+
+/* .main-content는 메인창에 해당하는 컴포넌트의 클래스로 가정합니다. */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  margin-left: 20px;
+}

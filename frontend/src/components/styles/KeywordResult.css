@@ -1,0 +1,61 @@
+.keyword-search-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    position: relative;
+  }
+  
+  .keyword-input {
+    padding: 8px;
+    border: 2px solid #692498;
+    border-radius: 10px;
+    margin-right: 10px;
+    width: 200px;
+    transition: width 0.3s ease-in-out;
+    font-size: 16px; /* 키워드 입력 창 글꼴 크기 */
+  }
+  
+  .keyword-input:hover {
+    width: 300px;
+  }
+  
+  .search-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 10px;
+    background-color: #692498;
+    color: #ffffff;
+    cursor: pointer;
+  }
+  
+  /* 검색 결과 표시 */
+  .search-results-container {
+    margin-top: 20px;
+  }
+  
+  .search-result-item {
+    margin-bottom: 20px;
+  }
+  
+  .result-text {
+    font-size: 14px; /* 검색 결과 문장 글꼴 크기 */
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+  
+  .highlight {
+    background-color: yellow; /* 하이라이팅 색상 */
+  }
+  
+  .result-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .file-name {
+    color: purple; /* 파일명 색상 */
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  

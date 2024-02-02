@@ -1,0 +1,173 @@
+/* styles/HomeScreen.css */
+
+/* 폴더 아이콘 스타일 */
+.folder-content {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.folder-icon img {
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.folder-name {
+  font-size: 15px;
+}
+  
+/* 업로드 버튼 스타일 */
+.upload-button {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+/* 업로드 메뉴 스타일 */
+.upload-menu {
+  position: fixed;
+  right: 30px;
+  bottom: 100px;
+  background-color: #692498;
+  border: 1px solid #692498;
+  color: #ffffff;
+  border-radius: 5px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+
+/* 업로드 메뉴 버튼 스타일 */
+.upload-menu-button {
+  background-color:  #692498;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  padding: 8px;
+  margin-top: 5px;
+  cursor: pointer;
+}
+  
+ 
+
+  /* 폴더 생성 팝업 스타일 */
+.create-folder-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  z-index: 3;
+}
+
+.create-folder-popup input {
+  padding: 8px;
+  margin-bottom: 10px;
+  margin-right: 5px;
+  width: 100%;
+}
+
+.create-folder-popup button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 10px;
+  background-color: #692498;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* 파일 업로드 팝업 스타일 */
+.file-upload-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  z-index: 3;
+}
+
+.file-upload-popup input {
+  padding: 8px;
+  margin-bottom: 10px;
+  width: calc(100% - 20px);
+}
+
+.file-upload-popup button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 10px;
+  background-color: #692498;
+  color: #fff;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.file-upload-popup select {
+  padding: 8px;
+  margin-bottom: 10px;
+  width: calc(100% - 20px);
+}
+
+.uploaded-files-container {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  margin-top: 10px;
+}
+
+.uploaded-file {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.file-icon {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+.file-name {
+  font-size: 14px;
+}
+
+.rename-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 0px 0px 10px 0px #ccc;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rename-popup input {
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+.rename-popup button {
+  padding: 10px;
+  margin: 5px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+}
