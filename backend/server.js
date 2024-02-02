@@ -65,8 +65,6 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
             console.error('해당 문서 또는 바이너리 데이터가 없습니다.');
             return;
         }*/
-
-    //console.log(document);
   } catch (error) {
     console.error("Error during file upload:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -82,12 +80,9 @@ app.post("/update_scripts", async (req, res) => {
     const newScripts = req.body.newScripts;
 
     // 특정 문서 조회 및 summary 필드 업데이트
-    const result = await collection.updateOne(
-      {
-        /* 여기에 원하는 조건을 추가하세요 */
-      },
-      { $set: { scripts: newScripts } }
-    );
+    const result = await collection.updateOne({
+      $set: { scripts: newScripts },
+    });
 
     if (result.modifiedCount > 0) {
       console.log("Scripts updated successfully");
@@ -111,12 +106,9 @@ app.post("/update_summary", async (req, res) => {
     const newSummary = req.body.newSummary;
 
     // 특정 문서 조회 및 summary 필드 업데이트
-    const result = await collection.updateOne(
-      {
-        /* 여기에 원하는 조건을 추가하세요 */
-      },
-      { $set: { summary: newSummary } }
-    );
+    const result = await collection.updateOne({
+      $set: { summary: newSummary },
+    });
 
     if (result.modifiedCount > 0) {
       console.log("Summary updated successfully");
@@ -144,11 +136,9 @@ app.post("/delete", async (req, res) => {
     if (result.deletedCount === 1) {
       res.status(200).json({ message: "문서가 성공적으로 삭제되었습니다." });
     } else {
-      res
-        .status(404)
-        .json({
-          message: "삭제할 문서를 찾지 못했거나 삭제 중 오류가 발생했습니다.",
-        });
+      res.status(404).json({
+        message: "삭제할 문서를 찾지 못했거나 삭제 중 오류가 발생했습니다.",
+      });
     }
 
     client.close();

@@ -59,22 +59,16 @@ async function timeStamps(chunks, config) {
     try {
       const [response] = await client.recognize(request);
       for (const result of response.results) {
-        console.log(`----${nth_bundle}-----`);
         for (const wordInfo of result.alternatives[0].words) {
           const startTime =
             wordInfo.startTime.seconds + wordInfo.startTime.nanos / 1e9;
-          console.log(wordInfo.word);
-
-          /*if ( startTime / 10 > ) {
-            
-            }*/
           Timestamps.push(nth_bundle * 60 + Math.floor(startTime / 10));
         }
       }
     } catch (error) {
       console.error("에러:", error);
     }
-    ++nth_bundle;
+    nth_bundle++;
   }
 
   return Timestamps;
@@ -115,7 +109,6 @@ async function speech2text(audioPath, targetWord) {
   // Read the linear16 audio file
   const audioFile = fs.readFileSync(linear16FilePath);
   const sampleRate = wav.decode(audioFile).sampleRate;
-  console.log("sample rate : ", sampleRate);
 
   // Split audio into 60-second chunks
   const audioChunks = splitAudio(audioFile, 60, sampleRate);
@@ -130,30 +123,12 @@ async function speech2text(audioPath, targetWord) {
   // 각 청크를 전사하고 결과를 연결
   const wordsWithTimestamps = await timeStamps(audioChunks, config);
 
-  // 특정 단어의 타임스탬프 찾아서 출력
-  //const targetWordTimestamps = wordsWithTimestamps.filter(
-  //  (word) => word.word.toLowerCase() === targetWord.toLowerCase()
-  //);
-
-  /*
-  if (targetWordTimestamps.length > 0) {
-    console.log(`"${targetWord}"의 타임스탬프:`);
-    for (const timestamp of targetWordTimestamps) {
-      console.log(
-        `시작 시간: ${timestamp.startTime}` //, 종료 시간: ${timestamp.endTime}`
-      );
-    }
-  } else {
-    console.log(`오디오에서 "${targetWord}"을(를) 찾을 수 없습니다.`);
-  }*/
-
   // Transcribe each chunk and concatenate results
   console.log(wordsWithTimestamps);
   return [
     await transcribeAndConcatenate(audioChunks, config),
     wordsWithTimestamps,
   ];
-  //console.log("Transcription:", result);
 }
 
 module.exports = speech2text;
