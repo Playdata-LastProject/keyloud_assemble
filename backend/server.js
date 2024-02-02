@@ -144,11 +144,9 @@ app.delete("/delete_files", async (req, res) => {
     if (result.deletedCount === 1) {
       res.status(200).json({ message: "문서가 성공적으로 삭제되었습니다." });
     } else {
-      res
-        .status(404)
-        .json({
-          message: "삭제할 문서를 찾지 못했거나 삭제 중 오류가 발생했습니다.",
-        });
+      res.status(404).json({
+        message: "삭제할 문서를 찾지 못했거나 삭제 중 오류가 발생했습니다.",
+      });
     }
 
     client.close();
@@ -160,9 +158,7 @@ app.delete("/delete_files", async (req, res) => {
 
 app.get("/search", async (req, res) => {
   try {
-
-    const collection = conn.db.collection('test');
-
+    const collection = conn.db.collection("test");
 
     const keyword = req.query.keyword;
     const regex = new RegExp(keyword, "i"); // 대소문자 구분 없이 검색
@@ -188,7 +184,7 @@ app.get("/search", async (req, res) => {
         timestamps["filename"] = document.filename.toString();
         timestamps["keywords"] = document.keywords;
         timestamps["timestamp"] = document.timestamp;
-        resultDictionary[document._id] = timestamps;
+        resultDictionary.push(timestamps);
       }
     }
     //프론트에서 id를 key로 해당 키워드 타임스태프 조회
@@ -202,4 +198,4 @@ app.get("/search", async (req, res) => {
 app.listen(5000, () => {
   console.log("Server started...");
 });
-z
+z;
