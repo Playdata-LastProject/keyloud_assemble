@@ -1,0 +1,42 @@
+.trash-screen {
+    position: relative;
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .trash-screen h1 {
+    color: #333;
+  }
+  
+  .trash-screen ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .trash-screen ul li {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+  }
+  
+  .empty-button {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    padding: 10px 20px;
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .empty-button:hover {
+    background-color: #c9302c;
+  }
