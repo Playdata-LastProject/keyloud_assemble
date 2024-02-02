@@ -156,7 +156,7 @@ app.delete("/delete_files", async (req, res) => {
   }
 });
 
-app.get("/search", async (req, res) => {
+app.get("/keyword_search", async (req, res) => {
   try {
     const collection = conn.db.collection("test");
 
