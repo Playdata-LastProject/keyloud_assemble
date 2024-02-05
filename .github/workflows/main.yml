@@ -22,4 +22,4 @@ jobs:
           username: ${{ secrets.USER }} # 내가 변수로 저장한 User
           script: |
             cd keyloud_assemble
-            git pull https://${{ secrets.GIT_USER }}:${{ secrets.GIT_PASSWORD }}@github.com/Playdata-LastProject/keyloud_assemble.git
+            git pull git@github.com:Playdata-LastProject/keyloud_assemble.git
