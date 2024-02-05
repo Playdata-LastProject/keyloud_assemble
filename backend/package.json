@@ -23,9 +23,12 @@
     "fs": "^0.0.1-security",
     "google-auth-library": "^9.4.2",
     "gridfs-stream": "^1.1.1",
+    "isomorphic-fetch": "^3.0.0",
     "mongoose": "^8.0.4",
     "multer": "^1.4.5-lts.1",
     "node-fetch": "^3.3.2",
-    "node-wav": "^0.0.2"
+    "node-wav": "^0.0.2",
+    "text-encoding": "^0.7.0",
+    "ts-node": "^10.9.2"
   }
 }

@@ -1,20 +1,37 @@
 const form = document.getElementById("form");
+const fetch = require('node-fetch');
 
 form.addEventListener("submit", submitForm);
-function submitForm(e) {
-    console.log("test2");
+
+async function submitForm(e) {
     e.preventDefault();
+
     const name = document.getElementById("name");
     const files = document.getElementById("files");
     const formData = new FormData();
+
     formData.append("name", name.value);
-    for (let i = 0; i < files.files.length; i++){
-        formData.append("file", files.files[i]);
+
+    for (let i = 0; i < files.files.length; i++) {
+        formData.append("file[]", files.files[i]);
     }
-    fetch("http://localhost:5000/upload_files", {
-        method: 'POST',
-        body: formData
-    })
-    .then((res) => console.log(res))
-    .catch((err) => ("Error occured", err));
+    
+
+    const url = 'http://localhost:5000/upload_files';
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Success:', data);
+    } catch (error) {
+        console.error('Error:', error.message);
+    }
 }

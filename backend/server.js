@@ -34,7 +34,7 @@ app.post("/upload_files", multer().single("file"), async (req, res) => {
     const text_result = s2t_result[0]; // ->현재 입력이 경로가 들어가도록 되어있어서 data변환해서 쓰도록 speech2text를 수정해야함
     const summary_result = await summary(text_result);
     const keywords_result = await keywords(text_result);
-    const synonyms_result = await synonyms(keywords_result);
+    //const synonyms_result = await synonyms(keywords_result);
 
     const timestamp_result = s2t_result[1];
 
