@@ -25,22 +25,30 @@ app.post("/upload_files", multer().single("file"), async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    fs.writeFileSync(`./uploads/${req.file.originalname}`, req.file.buffer);
+    // 클라이언트에서 전송한 selectedFolder 값을 받아옴
+    const selectedFolder = req.body.buffer;
 
-    const copy_path = "./uploads/" + req.file.originalname;
+    //fs.writeFileSync(`./uploads/${req.file.originalname}`, req.file.buffer);
+
+   // const copy_path = "./uploads/" + req.file.originalname; 
+    const copy_path = `./uploads/${selectedFolder}/${req.file.originalname}`;
+
+    fs.writeFileSync(copy_path, req.file.buffer);
 
     const s2t_result = await speech2text(copy_path);
 
     const text_result = s2t_result[0]; // ->현재 입력이 경로가 들어가도록 되어있어서 data변환해서 쓰도록 speech2text를 수정해야함
     const summary_result = await summary(text_result);
     const keywords_result = await keywords(text_result);
-    //const synonyms_result = await synonyms(keywords_result);
+    const synonyms_result = await synonyms(keywords_result);
 
     const timestamp_result = s2t_result[1];
 
+    const originalname = req.body.originalname;
+
     // 파일이 업로드된 후의 처리
     const fileDetails = {
-      filename: req.file.originalname,
+      filename: originalname,
       content: req.file.buffer, // 바이너리 데이터로 저장
       scripts: text_result,
       summary: summary_result,
