@@ -1,10 +1,12 @@
 // KeywordSearch.js
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './styles/KeywordSearch.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./styles/KeywordSearch.css";
+
+//import axios from 'axios';  // axios 라이브러리 추가
 
 const KeywordSearch = () => {
-  const [searchKeyword, setSearchKeyword] = useState('');
+  const [searchKeyword, setSearchKeyword] = useState("");
   const navigate = useNavigate();
 
   const handleSearch = () => {
