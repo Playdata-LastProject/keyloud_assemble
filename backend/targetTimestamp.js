@@ -39,7 +39,7 @@ async function targetTimestamp(str, keyword) {
     }
   }
 
-  const dict = {};
+  let dict = {};
   if (sentence.length >= 3) {
     dict = {
       index: result,
