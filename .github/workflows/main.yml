@@ -29,9 +29,11 @@ jobs:
 
             cd backend
             npm install
-            pm2 restart server.js
 
             cd ..
             cd frontend
             npm install
-            pm2 restart react
+
+            cd ..
+            pm2 restart server
+            pm2 restart client
