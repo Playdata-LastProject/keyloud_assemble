@@ -1,7 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"; // Link 컴포넌트 추가
 import "../App.css";
-import KeywordSearchPage from "./KeywordSearch"; // KeywordSearchPage 컴포넌트 import
 
 const LeftMenu = ({ onTrashPage }) => {
   return (

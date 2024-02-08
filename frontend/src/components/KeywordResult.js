@@ -31,7 +31,6 @@ const HomeScreen = () => {
           검색
         </button>
       </div>
-      {/* 기존의 폴더 및 파일 표시 코드 등 */}
     </div>
   );
 };
