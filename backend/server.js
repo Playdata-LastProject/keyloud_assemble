@@ -31,7 +31,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
 
     const s2t_result = await speech2text(copy_path);
 
-    const text_result = s2t_result[0]; // ->현재 입력이 경로가 들어가도록 되어있어서 data변환해서 쓰도록 speech2text를 수정해야함
+    const text_result = s2t_result[0];
     const summary_result = await summary(text_result);
     const keywords_result = await keywords(text_result);
     const synonyms_result = await synonyms(keywords_result);
@@ -56,17 +56,6 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
     console.log("File uploaded successfully");
 
     fs.unlinkSync(`./uploads/${req.file.originalname}`);
-
-    /*
-        // 파일 읽기 및 MongoDB에서 조회
-        const document = await conn.db.collection("test").findOne({ filename: fileDetails.filename });
-
-        if (!document || !document.fileData) {
-            console.error('해당 문서 또는 바이너리 데이터가 없습니다.');
-            return;
-        }*/
-
-    //console.log(document);
   } catch (error) {
     console.error("Error during file upload:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -82,12 +71,9 @@ app.post("/update_scripts", async (req, res) => {
     const newScripts = req.body.newScripts;
 
     // 특정 문서 조회 및 summary 필드 업데이트
-    const result = await collection.updateOne(
-      {
-        /* 여기에 원하는 조건을 추가하세요 */
-      },
-      { $set: { scripts: newScripts } }
-    );
+    const result = await collection.updateOne({
+      $set: { scripts: newScripts },
+    });
 
     if (result.modifiedCount > 0) {
       console.log("Scripts updated successfully");
@@ -176,6 +162,8 @@ app.get("/keyword_search", async (req, res) => {
     };
 
     const searchResults = await collection.find({}, projection).toArray();
+
+    console.log("here");
     for (const document of searchResults) {
       // 각 문서의 _id를 키로 사용하여 targetTimestamp 함수의 결과를 값으로 설정
       const timestamps = await targetTimestamp(document.scripts, keyword);
@@ -187,8 +175,8 @@ app.get("/keyword_search", async (req, res) => {
         resultDictionary.push(timestamps);
       }
     }
-    //프론트에서 id를 key로 해당 키워드 타임스태프 조회
-    res.json(resultDictionary);
+    console.log(resultDictionary);
+    res.send(resultDictionary);
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
     res.status(500).json({ error: "Internal Server Error" });

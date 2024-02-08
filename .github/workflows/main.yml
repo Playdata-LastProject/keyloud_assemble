@@ -1,0 +1,37 @@
+name: deploy
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+
+jobs:
+  SSH:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: ssh to ec2
+        uses: appleboy/ssh-action@master
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }} # 내가 변수로 저장한 pem key
+          host: ${{ secrets.HOST }} # 내가 변수로 저장한 ip
+          username: ${{ secrets.USER }} # 내가 변수로 저장한 User
+          script: |
+            cd keyloud_assemble
+            git pull git@github.com:Playdata-LastProject/keyloud_assemble.git
+
+            cd backend
+            npm install
+            pm2 restart server.js
+
+            cd ..
+            cd frontend
+            npm install
+            pm2 restart react
