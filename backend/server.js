@@ -17,7 +17,6 @@ app.use(cors());
 // MongoDB 연결
 mongoose.connect("mongodb://localhost:27017/keyloud");
 const conn = mongoose.connection;
-
 // 파일 업로드 라우트
 app.post("/upload_files", multer().single("files"), async (req, res) => {
   const collection = conn.db.collection("test");

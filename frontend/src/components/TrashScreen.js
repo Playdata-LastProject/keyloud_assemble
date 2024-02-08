@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './styles/TrashScreen.css'; // CSS 파일 임포트
 
-const initialItems = [
+const initialItems = [  
   { id: 1, name: 'Document1.txt' },
   { id: 2, name: 'Document2.txt' },
   // 추가 파일 또는 폴더
@@ -17,7 +17,7 @@ function TrashScreen() {
       // 확인 받았을 때만 삭제 처리
       setItems([]);
 
-      // 선택된 파일들의 ID 배열
+      // 선택된 파일들의 ID 배열 이 부분 삭제할 파일들의 id가 넣어지도록 수정!!!!!!!!!!!!!!!!!!!!!!!
       const selectedFileIds = [/* 여기에 선택된 파일들의 ID를 넣어주세요 */];
 
       // 삭제 요청을 보낼 API 엔드포인트
