@@ -19,36 +19,31 @@ mongoose.connect("mongodb://localhost:27017/keyloud");
 const conn = mongoose.connection;
 
 // 파일 업로드 라우트
-app.post("/upload_files", multer().single("file"), async (req, res) => {
+// 파일 업로드 라우트
+app.post("/upload_files", multer().single("files"), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    // 클라이언트에서 전송한 selectedFolder 값을 받아옴
-    const selectedFolder = req.body.buffer;
-
-    //fs.writeFileSync(`./uploads/${req.file.originalname}`, req.file.buffer);
-
-   // const copy_path = "./uploads/" + req.file.originalname; 
-    const copy_path = `./uploads/${selectedFolder}/${req.file.originalname}`;
-
+    const copy_path = "./uploads/" + req.file.originalname;
     fs.writeFileSync(copy_path, req.file.buffer);
 
     const s2t_result = await speech2text(copy_path);
 
-    const text_result = s2t_result[0]; // ->현재 입력이 경로가 들어가도록 되어있어서 data변환해서 쓰도록 speech2text를 수정해야함
+    const text_result = s2t_result[0];
     const summary_result = await summary(text_result);
     const keywords_result = await keywords(text_result);
     const synonyms_result = await synonyms(keywords_result);
 
     const timestamp_result = s2t_result[1];
 
-    const originalname = req.body.originalname;
+    // 여기에서 새 파일 이름으로 업데이트
+    const newFileName = req.body.customFileName || req.file.originalname;
 
     // 파일이 업로드된 후의 처리
     const fileDetails = {
-      filename: originalname,
+      filename: newFileName,
       content: req.file.buffer, // 바이너리 데이터로 저장
       scripts: text_result,
       summary: summary_result,
@@ -60,26 +55,18 @@ app.post("/upload_files", multer().single("file"), async (req, res) => {
 
     // MongoDB에 파일 정보 저장
     await conn.db.collection("test").insertOne(fileDetails);
-    res.json({ message: "File uploaded successfully" });
+
+    // MongoDB에 파일을 저장한 후에 파일 삭제
+    fs.unlinkSync(copy_path);
+
     console.log("File uploaded successfully");
-
-    fs.unlinkSync(`./uploads/${req.file.originalname}`);
-
-    /*
-        // 파일 읽기 및 MongoDB에서 조회
-        const document = await conn.db.collection("test").findOne({ filename: fileDetails.filename });
-
-        if (!document || !document.fileData) {
-            console.error('해당 문서 또는 바이너리 데이터가 없습니다.');
-            return;
-        }*/
-
-    //console.log(document);
+    res.json({ message: "File uploaded successfully" });
   } catch (error) {
     console.error("Error during file upload:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
 
 // Update URL로 요청이 들어왔을 때의 처리
 app.post("/update_scripts", async (req, res) => {
@@ -90,12 +77,9 @@ app.post("/update_scripts", async (req, res) => {
     const newScripts = req.body.newScripts;
 
     // 특정 문서 조회 및 summary 필드 업데이트
-    const result = await collection.updateOne(
-      {
-        /* 여기에 원하는 조건을 추가하세요 */
-      },
-      { $set: { scripts: newScripts } }
-    );
+    const result = await collection.updateOne({
+      $set: { scripts: newScripts },
+    });
 
     if (result.modifiedCount > 0) {
       console.log("Scripts updated successfully");
@@ -139,7 +123,7 @@ app.post("/update_summary", async (req, res) => {
   }
 });
 
-app.post("/delete", async (req, res) => {
+app.delete("/delete_files", async (req, res) => {
   try {
     // 클라이언트에서 전송된 요청 본문에서 삭제할 문서의 _id 값 가져오기
     const documentId = req.body.documentId; // 클라이언트에서 요청 시 실제 _id 값이 담긴 필드명에 맞게 수정
@@ -152,11 +136,9 @@ app.post("/delete", async (req, res) => {
     if (result.deletedCount === 1) {
       res.status(200).json({ message: "문서가 성공적으로 삭제되었습니다." });
     } else {
-      res
-        .status(404)
-        .json({
-          message: "삭제할 문서를 찾지 못했거나 삭제 중 오류가 발생했습니다.",
-        });
+      res.status(404).json({
+        message: "삭제할 문서를 찾지 못했거나 삭제 중 오류가 발생했습니다.",
+      });
     }
 
     client.close();
@@ -166,9 +148,9 @@ app.post("/delete", async (req, res) => {
   }
 });
 
-app.get("/search", async (req, res) => {
+app.get("/keyword_search", async (req, res) => {
   try {
-    const collection = db.collection("files");
+    const collection = conn.db.collection("test");
 
     const keyword = req.query.keyword;
     const regex = new RegExp(keyword, "i"); // 대소문자 구분 없이 검색
@@ -186,6 +168,8 @@ app.get("/search", async (req, res) => {
     };
 
     const searchResults = await collection.find({}, projection).toArray();
+
+    console.log("here");
     for (const document of searchResults) {
       // 각 문서의 _id를 키로 사용하여 targetTimestamp 함수의 결과를 값으로 설정
       const timestamps = await targetTimestamp(document.scripts, keyword);
@@ -194,11 +178,11 @@ app.get("/search", async (req, res) => {
         timestamps["filename"] = document.filename.toString();
         timestamps["keywords"] = document.keywords;
         timestamps["timestamp"] = document.timestamp;
-        resultDictionary[document._id] = timestamps;
+        resultDictionary.push(timestamps);
       }
     }
-    //프론트에서 id를 key로 해당 키워드 타임스태프 조회
-    res.json(resultDictionary);
+    console.log(resultDictionary);
+    res.send(resultDictionary);
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
     res.status(500).json({ error: "Internal Server Error" });
