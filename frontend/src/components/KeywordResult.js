@@ -1,39 +1,69 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./styles/HomeScreen.css";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useLocation } from "react-router-dom";
+import "./styles/KeywordResult.css";
 
-const HomeScreen = () => {
-  const navigate = useNavigate();
-  const [searchKeyword, setSearchKeyword] = useState(""); // 검색어 상태 추가
+const KeywordResult = () => {
+  const location = useLocation();
+  const { searchKeyword } = location.state || {};
+  const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSearchKeyword = () => {
-    // 검색어가 비어있는지 확인
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await axios.get(
+          `http://localhost:5000/keyword_search?keyword=${encodeURIComponent(searchKeyword)}`
+        );
+        const data = response.data;
+
+        setSearchResults(data);
+      } catch (error) {
+        setError("검색 결과를 가져오는 중 에러 발생");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [searchKeyword]);
+
+  // Function to highlight the search keyword in a given sentence
+  const highlightKeyword = (sentence) => {
     if (!searchKeyword.trim()) {
-      console.log("검색어를 입력하세요");
-      return;
+      return sentence; // Return unchanged if the search keyword is empty
     }
-    // 검색어가 입력되었을 때의 로직
-    navigate(`/keyword-result`);
+    const regex = new RegExp(`(${searchKeyword})`, "gi");
+    return sentence.replace(regex, (match, p1) => `<span class="highlight">${p1}</span>`);
   };
 
   return (
     <div>
-      {/* 검색어 입력란과 버튼 */}
-      <div className="search-container">
-        <input
-          type="text"
-          placeholder="검색할 키워드를 입력하세요"
-          value={searchKeyword}
-          onChange={(e) => setSearchKeyword(e.target.value)}
-          className="search-input"
-        />
-        <button onClick={handleSearchKeyword} className="search-button">
-          검색
-        </button>
-      </div>
-      {/* 기존의 폴더 및 파일 표시 코드 등 */}
+      <h2>검색 결과</h2>
+      {loading && <p>검색 중...</p>}
+      {error && <p>{error}</p>}
+
+      <ul>
+        {searchResults && searchResults.length > 0 ? (
+          searchResults.map((result) => (
+            <li key={result._id} className="search-result-item">
+              <p className="file-name">{result.filename}</p>
+              <p
+                className="result-text"
+                dangerouslySetInnerHTML={{ __html: `키워드: ${highlightKeyword(result.sentence[0])}` }}
+              ></p>
+            </li>
+          ))
+        ) : (
+          <p>검색 결과가 없습니다.</p>
+        )}
+      </ul>
     </div>
   );
 };
 
-export default HomeScreen;
+export default KeywordResult;
