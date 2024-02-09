@@ -25,7 +25,7 @@ jobs:
           username: ${{ secrets.USER }} # 내가 변수로 저장한 User
           script: |
             cd keyloud_assemble
-            git pull git@github.com:Playdata-LastProject/keyloud_assemble.git
+            git pull origin main
             
             pm2 restart server
             pm2 restart client
