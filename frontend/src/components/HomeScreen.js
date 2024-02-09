@@ -73,7 +73,7 @@ const HomeScreen = () => {
   // 업로드 버튼 클릭 시
   const handleUpload = async () => {
     try {
-      if (!selectedFile) {
+      if (!selectedFile || !selectedFolder) {
         console.error("No file selected");
         return;
       }
@@ -82,6 +82,9 @@ const HomeScreen = () => {
       formData.append("files", selectedFile);
       formData.append("customFileName", customFileName);
       formData.append("selectedFolder", selectedFolder);
+
+      formData.append("uploadDate", new Date().toISOString()); // 파일 업로드 날짜 및 시간
+      formData.append("folderName", selectedFolder); // 폴더명
 
       const response = await fetch("http://localhost:5000/upload_files", {
         method: "POST",
