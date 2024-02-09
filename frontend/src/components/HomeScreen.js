@@ -89,8 +89,8 @@ const HomeScreen = () => {
         credentials: 'include', 
       });
 
-      const data = await response.json();
-      console.log(data.message); // 서버로부터 받은 응답 메시지 출력
+      const data = await response[0];
+      console.log(data); // 서버로부터 받은 응답 메시지 출력
 
       // 파일 업로드 후에 필요한 추가적인 작업 수행 가능
     } catch (error) {
@@ -150,9 +150,6 @@ const HomeScreen = () => {
       );
       setAddedFolders(updatedFolders);
 
-      // 파일 수정 로직은 uploadedFiles 상태를 업데이트해야 합니다.
-      // 추가: handleMoveToTrash 함수 내용을 여기에 추가
-
       setRenamePopupOpen(false);
       setSelectedItem(null);
     }
@@ -160,7 +157,6 @@ const HomeScreen = () => {
 
   return (
     <div>
-      {/* 폴더 아이콘과 폴더명 세트 */}
       {addedFolders.map((folder) => (
         <div key={folder.id}>
           <div
@@ -227,6 +223,7 @@ const HomeScreen = () => {
           <button className="create-folder-button" onClick={handleCreateFolder}>
             폴더 생성
           </button>
+          <div>data</div>
         </div>
       )}
 
