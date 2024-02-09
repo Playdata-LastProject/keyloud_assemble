@@ -86,6 +86,7 @@ const HomeScreen = () => {
       const response = await fetch("http://localhost:5000/upload_files", {
         method: "POST",
         body: formData,
+        credentials: 'include', 
       });
 
       const data = await response[0];
