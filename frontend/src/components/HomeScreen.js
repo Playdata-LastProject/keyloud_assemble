@@ -87,6 +87,7 @@ const HomeScreen = () => {
         const response = await fetch("ip-172-31-43-14.ap-northeast-2.compute.internal:5000/upload_files", {
         method: "POST",
         body: formData,
+        credentials: 'include', 
       });
 
       const data = await response[0];
