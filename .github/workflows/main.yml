@@ -26,14 +26,6 @@ jobs:
           script: |
             cd keyloud_assemble
             git pull git@github.com:Playdata-LastProject/keyloud_assemble.git
-
-            cd backend
-            npm install
-
-            cd ..
-            cd frontend
-            npm install
-
-            cd ..
+            
             pm2 restart server
             pm2 restart client
