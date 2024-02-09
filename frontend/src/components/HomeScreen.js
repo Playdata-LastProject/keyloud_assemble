@@ -30,13 +30,21 @@ const HomeScreen = () => {
       setUploadedFiles(JSON.parse(storedUploadedFiles));
     }
 
-    // 여기서 기본 폴더 정보를 추가합니다.
-    setAddedFolders([{ name: "최근 업로드 폴더", id: 1 }]);
-  }, [setUploadedFiles]);
+    // 로컬 스토리지에서 폴더 정보를 가져옴
+    const storedFolders = localStorage.getItem("addedFolders");
+    if (storedFolders) {
+      setAddedFolders(JSON.parse(storedFolders));
+    } else {
+      // 초기 폴더 정보 설정
+      setAddedFolders([{ name: "최근 업로드 폴더", id: 1 }]);
+      localStorage.setItem("addedFolders", JSON.stringify(addedFolders));
+    }
+  }, [setUploadedFiles, addedFolders]);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
       localStorage.setItem("uploadedFiles", JSON.stringify(uploadedFiles));
+      localStorage.setItem("addedFolders", JSON.stringify(addedFolders));
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
@@ -44,7 +52,7 @@ const HomeScreen = () => {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [uploadedFiles]);
+  }, [uploadedFiles, addedFolders]);
 
   const [isCreateFolderPopupOpen, setCreateFolderPopupOpen] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
@@ -59,18 +67,15 @@ const HomeScreen = () => {
     setUploadMenuOpen(!isUploadMenuOpen);
   };
 
-  // 파일 업로드 팝업 열기
   const handleFileUploadButtonClick = () => {
     setFileUploadPopupOpen(true);
   };
 
-  // 파일 선택
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     setSelectedFile(file);
   };
 
-  // 업로드 버튼 클릭 시
   const handleUpload = async () => {
     try {
       if (!selectedFile || !selectedFolder) {
@@ -83,8 +88,8 @@ const HomeScreen = () => {
       formData.append("customFileName", customFileName);
       formData.append("selectedFolder", selectedFolder);
 
-      formData.append("uploadDate", new Date().toISOString()); // 파일 업로드 날짜 및 시간
-      formData.append("folderName", selectedFolder); // 폴더명
+      formData.append("uploadDate", new Date().toISOString());
+      formData.append("folderName", selectedFolder);
 
       const response = await fetch("http://localhost:5000/upload_files", {
         method: "POST",
@@ -92,9 +97,7 @@ const HomeScreen = () => {
       });
 
       const data = await response.json();
-      console.log(data.message); // 서버로부터 받은 응답 메시지 출력
-
-      // 파일 업로드 후에 필요한 추가적인 작업 수행 가능
+      console.log(data.message);
     } catch (error) {
       console.error("Error uploading file:", error);
     }
@@ -106,7 +109,6 @@ const HomeScreen = () => {
 
   const handleFolderIconClick = (folderName) => {
     setUploadMenuOpen(false);
-    // 여기서 폴더 아이콘 클릭 시의 로직을 추가하세요
   };
 
   const handleCreateFolderButtonClick = () => {
@@ -117,6 +119,7 @@ const HomeScreen = () => {
     if (newFolderName.trim() !== "") {
       const newFolder = { name: newFolderName, id: Date.now() };
       setAddedFolders((prevFolders) => [...prevFolders, newFolder]);
+      localStorage.setItem("addedFolders", JSON.stringify([...addedFolders, newFolder]));
       addFolder(newFolder);
       setNewFolderName("");
     }
@@ -134,27 +137,17 @@ const HomeScreen = () => {
         folder.id === selectedItem.id ? { ...folder, name: newName } : folder
       );
       setAddedFolders(updatedFolders);
-
-      // 파일 수정 로직은 uploadedFiles 상태를 업데이트해야 합니다.
-      // 추가: handleRename 함수 내용을 여기에 추가
-
       setRenamePopupOpen(false);
       setSelectedItem(null);
     }
   };
 
-  // 수정: handleMoveToTrash 함수 정의
   const handleMoveToTrash = () => {
     if (newName.trim() !== "") {
-      // handleRename 함수 내용을 여기에 직접 구현
       const updatedFolders = addedFolders.map((folder) =>
         folder.id === selectedItem.id ? { ...folder, name: newName } : folder
       );
       setAddedFolders(updatedFolders);
-
-      // 파일 수정 로직은 uploadedFiles 상태를 업데이트해야 합니다.
-      // 추가: handleMoveToTrash 함수 내용을 여기에 추가
-
       setRenamePopupOpen(false);
       setSelectedItem(null);
     }
@@ -162,7 +155,6 @@ const HomeScreen = () => {
 
   return (
     <div>
-      {/* 폴더 아이콘과 폴더명 세트 */}
       {addedFolders.map((folder) => (
         <div key={folder.id}>
           <div
@@ -189,7 +181,6 @@ const HomeScreen = () => {
         </div>
       ))}
 
-      {/* 업로드 버튼 */}
       <button className="upload-button" onClick={handleUploadButtonClick}>
         <img
           src="/images/upload.png"
@@ -198,7 +189,6 @@ const HomeScreen = () => {
         />
       </button>
 
-      {/* 업로드 메뉴 */}
       {isUploadMenuOpen && (
         <div className="upload-menu">
           <button
@@ -216,11 +206,10 @@ const HomeScreen = () => {
         </div>
       )}
 
-      {/* 폴더 생성 팝업 */}
       {isCreateFolderPopupOpen && (
         <div className="create-folder-popup">
           <input
-            className="create-folder-input" // 추가: 클래스 이름 추가
+            className="create-folder-input"
             type="text"
             placeholder="폴더명을 입력하세요"
             value={newFolderName}
@@ -232,17 +221,13 @@ const HomeScreen = () => {
         </div>
       )}
 
-      {/* 파일 업로드 팝업 */}
       {isFileUploadPopupOpen && (
         <div className="file-upload-popup">
-          {/* 파일 선택을 위한 파일 입력란 */}
           <input
             className="file-upload-input"
             type="file"
             onChange={handleFileSelect}
           />
-
-          {/* 사용자 정의 파일명 입력을 위한 입력란 */}
           <input
             className="file-upload-custom-input"
             type="text"
@@ -250,9 +235,6 @@ const HomeScreen = () => {
             value={customFileName}
             onChange={(e) => setCustomFileName(e.target.value)}
           />
-
-          {/* 폴더 선택을 위한 드롭다운 또는 UI */}
-          {/* 폴더를 선택하고 selectedFolder 상태를 업데이트하는 논리 또는 UI를 추가하세요 */}
           <select
             className="file-upload-select"
             value={selectedFolder}
@@ -267,15 +249,12 @@ const HomeScreen = () => {
               </option>
             ))}
           </select>
-
-          {/* 업로드 버튼 */}
           <button className="file-upload-button" onClick={handleUpload}>
             업로드
           </button>
         </div>
       )}
 
-      {/* 팝업창 */}
       {isRenamePopupOpen && (
         <div className="rename-popup">
           <input
@@ -284,9 +263,7 @@ const HomeScreen = () => {
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
           />
-          {/* 수정: handleRename 함수 호출로 변경 */}
           <button onClick={handleRename}>이름 변경</button>
-          {/* 수정: handleMoveToTrash 함수 호출로 변경 */}
           <button onClick={handleMoveToTrash}>휴지통으로 이동</button>
         </div>
       )}
