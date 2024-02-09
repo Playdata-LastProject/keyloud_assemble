@@ -1,3 +1,5 @@
+process.env.GOOGLE_APPLICATION_CREDENTIALS = 'C:\\Users\\USER\\AppData\\Roaming\\gcloud\\application_default_credentials.json';
+
 const express = require("express");
 const multer = require("multer");
 const mongoose = require("mongoose");
@@ -41,6 +43,10 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
     // 여기에서 새 파일 이름으로 업데이트
     const newFileName = req.body.customFileName || req.file.originalname;
 
+    const selectedFolder = req.body.selectedFolder || "DefaultFolder";
+    console.log("Selected Folder:", selectedFolder);
+    const uploadDate = req.body.uploadDate || new Date().toISOString(); // 파일 업로드 날짜 및 시간
+
     // 파일이 업로드된 후의 처리
     const fileDetails = {
       filename: newFileName,
@@ -50,6 +56,8 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       keywords: keywords_result,
       synonyms: synonyms_result,
       timestamp: timestamp_result,
+      selectedFolder: selectedFolder,
+      uploadDate: uploadDate, 
       // 기타 필요한 파일 정보들 ..추가 -> erd보고 추가
     };
 
@@ -63,7 +71,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
     res.json({ message: "File uploaded successfully" });
   } catch (error) {
     console.error("Error during file upload:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" , error: error.message});
   }
 });
 
