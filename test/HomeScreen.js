@@ -1,122 +1,145 @@
-import React, { useState, useEffect } from 'react';
-import './styles/HomeScreen.css';
-import { useContext } from 'react';
-import { AppContext } from '../AppContext.js';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import "./styles/HomeScreen.css";
+import { useContext } from "react";
+import { AppContext } from "../AppContext.js";
+import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const HomeScreen = () => {
   const navigate = useNavigate();
   const [searchResults, setSearchResults] = useState([]);
-  const { folders, uploadedFiles, addFolder, addFileToFolder, setUploadedFiles, } = useContext(AppContext);
+  const {
+    folders,
+    uploadedFiles,
+    addFolder,
+    addFileToFolder,
+    setUploadedFiles,
+  } = useContext(AppContext);
   const [isUploadMenuOpen, setUploadMenuOpen] = useState(false);
   const [addedFolders, setAddedFolders] = useState([
-    { name: '최근 업로드 폴더', id: 1 },
+    { name: "최근 업로드 폴더", id: 1 },
   ]);
-  const [userKeyword, setUserKeyword] = useState(''); 
+  const [userKeyword, setUserKeyword] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
   const [isRenamePopupOpen, setRenamePopupOpen] = useState(false);
-  const [newName, setNewName] = useState('');
+  const [newName, setNewName] = useState("");
+  const [folderFiles, setFolderFiles] = useState({});
+
 
   useEffect(() => {
     // 페이지 로드 시 로컬 스토리지에서 uploadedFiles 값을 가져옴
-    const storedUploadedFiles = localStorage.getItem('uploadedFiles');
+    const storedUploadedFiles = localStorage.getItem("uploadedFiles");
     if (storedUploadedFiles) {
       setUploadedFiles(JSON.parse(storedUploadedFiles));
     }
 
-    // 여기서 기본 폴더 정보를 추가합니다.
-    setAddedFolders([{ name: '최근 업로드 폴더', id: 1 }]);
-  }, [setUploadedFiles]);
+    // 로컬 스토리지에서 폴더 정보를 가져옴
+    const storedFolders = localStorage.getItem("addedFolders");
+    if (storedFolders) {
+      setAddedFolders(JSON.parse(storedFolders));
+    } else {
+      // 초기 폴더 정보 설정
+      setAddedFolders([{ name: "최근 업로드 폴더", id: 1 }]);
+      localStorage.setItem("addedFolders", JSON.stringify([{ name: "최근 업로드 폴더", id: 1 }]));
+    }
+  }, [setUploadedFiles, setAddedFolders]);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
-      localStorage.setItem('uploadedFiles', JSON.stringify(uploadedFiles));
+      localStorage.setItem("uploadedFiles", JSON.stringify(uploadedFiles));
+      localStorage.setItem("addedFolders", JSON.stringify(addedFolders));
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [uploadedFiles]);  
+  }, [uploadedFiles, addedFolders]);
 
   const [isCreateFolderPopupOpen, setCreateFolderPopupOpen] = useState(false);
-  const [newFolderName, setNewFolderName] = useState('');
+  const [newFolderName, setNewFolderName] = useState("");
 
   const [isFileUploadPopupOpen, setFileUploadPopupOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [customFileName, setCustomFileName] = useState('');
-  const [selectedFolder, setSelectedFolder] = useState('');
+  const [customFileName, setCustomFileName] = useState("");
+  const [selectedFolder, setSelectedFolder] = useState("");
   const [uploadedFilesState, setUploadedFilesState] = useState({});
-   
-  
-  
-  
+
   const handleUploadButtonClick = () => {
     setUploadMenuOpen(!isUploadMenuOpen);
   };
 
-  // 파일 업로드 팝업 열기
   const handleFileUploadButtonClick = () => {
     setFileUploadPopupOpen(true);
   };
 
-  // 파일 선택
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     setSelectedFile(file);
   };
 
-  // 업로드 버튼 클릭 시
   const handleUpload = async () => {
-    const formData = new FormData();
-    formData.append('file', selectedFile);  // 파일 자체
-    formData.append('originalname', customFileName);  // 파일의 원래 이름
-    formData.append('buffer', selectedFolder);  
-  
     try {
-      const response = await fetch('http://localhost:5000/upload_files', {
-        method: 'POST',
-        body: formData,
-      });
-  
-      if (response.ok) {
-        console.log('File uploaded successfully');
-        // 서버에서 반환한 데이터를 처리 (예: 응답에서 업로드된 파일 정보를 얻어와서 상태 업데이트)
-      } else {
-        console.error('File upload failed');
+      if (!selectedFile || !selectedFolder) {
+        console.error("No file selected");
+        return;
       }
+
+      const formData = new FormData();
+      formData.append("files", selectedFile);
+      formData.append("customFileName", customFileName);
+      formData.append("selectedFolder", selectedFolder);
+
+      formData.append("uploadDate", new Date().toISOString());
+      formData.append("folderName", selectedFolder);
+
+      const response = await axios.post("http://localhost:5000/upload_files", formData);
+
+      const data = await response.json();
+      console.log(response.data.message);
     } catch (error) {
-      console.error('Error during file upload:', error);
+      console.error("Error uploading file:", error);
     }
-  
-    // 상태 초기화
-    setFileUploadPopupOpen(false);
-    setSelectedFile(null);
-    setCustomFileName('');
-    setSelectedFolder('');
   };
-  
 
   const handleNavigateToKeywordResult = () => {
     navigate(`/keyword-result?keyword=${userKeyword}`);
   };
 
-  const handleFolderIconClick = (folderName) => {
-    setUploadMenuOpen(false);
-    // 여기서 폴더 아이콘 클릭 시의 로직을 추가하세요
+  const handleFolderIconClick = async (folderName) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/get_files?folder=${encodeURIComponent(folderName)}`);
+      const files = response.data;
+      console.log(files); // 서버에서 받아온 파일 목록 출력 또는 상태 업데이트 등 필요한 작업 수행
+      setFolderFiles({ ...folderFiles, [folderName]: files });
+      console.log('Folder Files:', folderFiles); // 파일 목록을 콘솔에 출력
+    } catch (error) {
+      console.error('Error fetching files:', error);
+      // 에러 처리 로직 추가
+    }
   };
-
+  
   const handleCreateFolderButtonClick = () => {
     setCreateFolderPopupOpen(true);
   };
 
-  const handleCreateFolder = () => {
-    if (newFolderName.trim() !== '') {
+  const handleCreateFolder = async () => {
+    if (newFolderName.trim() !== "") {
       const newFolder = { name: newFolderName, id: Date.now() };
       setAddedFolders((prevFolders) => [...prevFolders, newFolder]);
+      localStorage.setItem("addedFolders", JSON.stringify([...addedFolders, newFolder]));
       addFolder(newFolder);
-      setNewFolderName('');
+
+      // 서버에 새로운 폴더 정보 전송
+      try {
+        await axios.post("http://localhost:5000/create_folder", { folder: newFolder });
+      } catch (error) {
+        console.error('Error creating folder:', error);
+        // 에러 처리 로직 추가
+      }
+
+      setNewFolderName("");
     }
     setCreateFolderPopupOpen(false);
   };
@@ -126,34 +149,23 @@ const HomeScreen = () => {
     setNewName(item.name);
   };
 
-  
   const handleRename = () => {
-    if (newName.trim() !== '') {
+    if (newName.trim() !== "") {
       const updatedFolders = addedFolders.map((folder) =>
         folder.id === selectedItem.id ? { ...folder, name: newName } : folder
       );
       setAddedFolders(updatedFolders);
-
-      // 파일 수정 로직은 uploadedFiles 상태를 업데이트해야 합니다.
-      // 추가: handleRename 함수 내용을 여기에 추가
-
       setRenamePopupOpen(false);
       setSelectedItem(null);
     }
   };
 
-  // 수정: handleMoveToTrash 함수 정의
   const handleMoveToTrash = () => {
-    if (newName.trim() !== '') {
-      // handleRename 함수 내용을 여기에 직접 구현
+    if (newName.trim() !== "") {
       const updatedFolders = addedFolders.map((folder) =>
         folder.id === selectedItem.id ? { ...folder, name: newName } : folder
       );
       setAddedFolders(updatedFolders);
-
-      // 파일 수정 로직은 uploadedFiles 상태를 업데이트해야 합니다.
-      // 추가: handleMoveToTrash 함수 내용을 여기에 추가
-
       setRenamePopupOpen(false);
       setSelectedItem(null);
     }
@@ -161,62 +173,80 @@ const HomeScreen = () => {
 
   return (
     <div>
-      {/* 폴더 아이콘과 폴더명 세트 */}
       {addedFolders.map((folder) => (
-       <div key={folder.id}>
-        <div className="folder-content" onClick={() => handleFolderIconClick(folder.name)}>
-         <div className="folder-icon img">
-         <img src="/images/folder-icon.png" alt="폴더 아이콘" style={{ width: '20px', height: '20px' }} />
-         </div>
-         <div className="folder-name">{folder.name}</div>
+        <div key={folder.id}>
+          <div
+            className="folder-content"
+            onClick={() => handleFolderIconClick(folder.name)}
+          >
+            <div className="folder-icon img">
+              <img
+                src="/images/folder-icon.png"
+                alt="폴더 아이콘"
+                style={{ width: "20px", height: "20px" }}
+              />
+            </div>
+            <div className="folder-name">{folder.name}</div>
+          </div>
+          <div className="uploaded-files-container">
+            {folderFiles[folder.name] && folderFiles[folder.name].map((file, index) => (
+              <div key={index} className="uploaded-file">
+                <img src={file.icon} alt="File Icon" className="file-icon" />
+                <div className="file-name">{file.filename}</div>
+                <div className="upload-date">{file.uploadDate}</div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="uploaded-files-container">
-         {uploadedFiles[folder.name]?.map((file, index) => (
-         <div key={index} className="uploaded-file">
-          <img src={file.icon} alt="File Icon" className="file-icon" />
-          <div className="file-name">{file.name}</div>
-         </div>
-        ))}
-        </div>
-       </div>
       ))}
 
-      {/* 업로드 버튼 */}
       <button className="upload-button" onClick={handleUploadButtonClick}>
-        <img src="/images/upload.png" alt="업로드 아이콘" style={{ width: '40px', height: '35px' }} />
+        <img
+          src="/images/upload.png"
+          alt="업로드 아이콘"
+          style={{ width: "40px", height: "35px" }}
+        />
       </button>
 
-      {/* 업로드 메뉴 */}
       {isUploadMenuOpen && (
         <div className="upload-menu">
-          <button className="upload-menu-button" onClick={handleCreateFolderButtonClick}>
+          <button
+            className="upload-menu-button"
+            onClick={handleCreateFolderButtonClick}
+          >
             폴더 생성
           </button>
-          <button className="upload-menu-button" onClick={handleFileUploadButtonClick}>파일 업로드</button>
+          <button
+            className="upload-menu-button"
+            onClick={handleFileUploadButtonClick}
+          >
+            파일 업로드
+          </button>
         </div>
       )}
 
-      {/* 폴더 생성 팝업 */}
       {isCreateFolderPopupOpen && (
         <div className="create-folder-popup">
           <input
-           className="create-folder-input" // 추가: 클래스 이름 추가
-           type="text"
-           placeholder="폴더명을 입력하세요"
-           value={newFolderName}
-           onChange={(e) => setNewFolderName(e.target.value)}
+            className="create-folder-input"
+            type="text"
+            placeholder="폴더명을 입력하세요"
+            value={newFolderName}
+            onChange={(e) => setNewFolderName(e.target.value)}
           />
-         <button className="create-folder-button" onClick={handleCreateFolder}>폴더 생성</button>
-       </div>
+          <button className="create-folder-button" onClick={handleCreateFolder}>
+            폴더 생성
+          </button>
+        </div>
       )}
-      
-      {/* 파일 업로드 팝업 */}
+
       {isFileUploadPopupOpen && (
         <div className="file-upload-popup">
-          {/* 파일 선택을 위한 파일 입력란 */}
-          <input className="file-upload-input" type="file" onChange={handleFileSelect} />
-
-          {/* 사용자 정의 파일명 입력을 위한 입력란 */}
+          <input
+            className="file-upload-input"
+            type="file"
+            onChange={handleFileSelect}
+          />
           <input
             className="file-upload-custom-input"
             type="text"
@@ -224,28 +254,26 @@ const HomeScreen = () => {
             value={customFileName}
             onChange={(e) => setCustomFileName(e.target.value)}
           />
-
-          {/* 폴더 선택을 위한 드롭다운 또는 UI */}
-          {/* 폴더를 선택하고 selectedFolder 상태를 업데이트하는 논리 또는 UI를 추가하세요 */}
           <select
             className="file-upload-select"
             value={selectedFolder}
             onChange={(e) => setSelectedFolder(e.target.value)}
           >
-            <option value="" disabled>Select a folder</option>
+            <option value="" disabled>
+              Select a folder
+            </option>
             {addedFolders.map((folder) => (
-              <option key={folder.id} value={folder.name}>{folder.name}</option>
-              ))}
-              </select>
-    
-              {/* 업로드 버튼 */}
-              <button 
-              className="file-upload-button"
-              onClick={handleUpload}>업로드</button>
-            </div>
-          )}
-        
-      {/* 팝업창 */}
+              <option key={folder.id} value={folder.name}>
+                {folder.name}
+              </option>
+            ))}
+          </select>
+          <button className="file-upload-button" onClick={handleUpload}>
+            업로드
+          </button>
+        </div>
+      )}
+
       {isRenamePopupOpen && (
         <div className="rename-popup">
           <input
@@ -254,15 +282,12 @@ const HomeScreen = () => {
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
           />
-          {/* 수정: handleRename 함수 호출로 변경 */}
           <button onClick={handleRename}>이름 변경</button>
-          {/* 수정: handleMoveToTrash 함수 호출로 변경 */}
           <button onClick={handleMoveToTrash}>휴지통으로 이동</button>
         </div>
       )}
+    </div>
+  );
+};
 
-        </div>
-      );
-    };
-
-export default HomeScreen;           
+export default HomeScreen;

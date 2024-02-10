@@ -3,6 +3,7 @@ import "./styles/HomeScreen.css";
 import { useContext } from "react";
 import { AppContext } from "../AppContext.js";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const HomeScreen = () => {
   const navigate = useNavigate();
@@ -22,6 +23,8 @@ const HomeScreen = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [isRenamePopupOpen, setRenamePopupOpen] = useState(false);
   const [newName, setNewName] = useState("");
+  const [folderFiles, setFolderFiles] = useState({});
+
 
   useEffect(() => {
     // 페이지 로드 시 로컬 스토리지에서 uploadedFiles 값을 가져옴
@@ -37,9 +40,9 @@ const HomeScreen = () => {
     } else {
       // 초기 폴더 정보 설정
       setAddedFolders([{ name: "최근 업로드 폴더", id: 1 }]);
-      localStorage.setItem("addedFolders", JSON.stringify(addedFolders));
+      localStorage.setItem("addedFolders", JSON.stringify([{ name: "최근 업로드 폴더", id: 1 }]));
     }
-  }, [setUploadedFiles, addedFolders]);
+  }, [setUploadedFiles, setAddedFolders]);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -91,13 +94,10 @@ const HomeScreen = () => {
       formData.append("uploadDate", new Date().toISOString());
       formData.append("folderName", selectedFolder);
 
-      const response = await fetch("http://localhost:5000/upload_files", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await axios.post("http://localhost:5000/upload_files", formData);
 
       const data = await response.json();
-      console.log(data.message);
+      console.log(response.data.message);
     } catch (error) {
       console.error("Error uploading file:", error);
     }
@@ -107,20 +107,38 @@ const HomeScreen = () => {
     navigate(`/keyword-result?keyword=${userKeyword}`);
   };
 
-  const handleFolderIconClick = (folderName) => {
-    setUploadMenuOpen(false);
+  const handleFolderIconClick = async (folderName) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/get_files?folder=${encodeURIComponent(folderName)}`);
+      const files = response.data;
+      console.log(files); // 서버에서 받아온 파일 목록 출력 또는 상태 업데이트 등 필요한 작업 수행
+      setFolderFiles({ ...folderFiles, [folderName]: files });
+      console.log('Folder Files:', folderFiles); // 파일 목록을 콘솔에 출력
+    } catch (error) {
+      console.error('Error fetching files:', error);
+      // 에러 처리 로직 추가
+    }
   };
-
+  
   const handleCreateFolderButtonClick = () => {
     setCreateFolderPopupOpen(true);
   };
 
-  const handleCreateFolder = () => {
+  const handleCreateFolder = async () => {
     if (newFolderName.trim() !== "") {
       const newFolder = { name: newFolderName, id: Date.now() };
       setAddedFolders((prevFolders) => [...prevFolders, newFolder]);
       localStorage.setItem("addedFolders", JSON.stringify([...addedFolders, newFolder]));
       addFolder(newFolder);
+
+      // 서버에 새로운 폴더 정보 전송
+      try {
+        await axios.post("http://localhost:5000/create_folder", { folder: newFolder });
+      } catch (error) {
+        console.error('Error creating folder:', error);
+        // 에러 처리 로직 추가
+      }
+
       setNewFolderName("");
     }
     setCreateFolderPopupOpen(false);
@@ -171,10 +189,12 @@ const HomeScreen = () => {
             <div className="folder-name">{folder.name}</div>
           </div>
           <div className="uploaded-files-container">
-            {uploadedFiles[folder.name]?.map((file, index) => (
+            {folderFiles[folder.name] && folderFiles[folder.name].map((file, index) => (
               <div key={index} className="uploaded-file">
-                <img src={file.icon} alt="File Icon" className="file-icon" />
-                <div className="file-name">{file.name}</div>
+                <img src="/images/file-icon.png" alt="File Icon" className="file-icon" />
+
+                <div className="file-name">{file.filename}</div>
+                <div className="upload-date">{file.uploadDate}</div>
               </div>
             ))}
           </div>

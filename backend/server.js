@@ -17,7 +17,10 @@ const app = express();
 app.use(cors());
 
 // MongoDB 연결
-mongoose.connect("mongodb://localhost:27017/keyloud");
+mongoose.connect("mongodb://localhost:27017/keyloud", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 const conn = mongoose.connection;
 
 // 파일 업로드 라우트
@@ -27,6 +30,8 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
+
+
 
     const copy_path = "./uploads/" + req.file.originalname;
     fs.writeFileSync(copy_path, req.file.buffer);
@@ -155,7 +160,19 @@ app.delete("/delete_files", async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+app.get("/get_files", async (req, res) => {
+  try {
+    const collection = conn.db.collection("test");
 
+    const folderName = decodeURIComponent(req.query.folder);
+    const result = await collection.find({ selectedFolder: folderName }).toArray();
+
+    res.json(result);
+  } catch (error) {
+    console.error("Error fetching files:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 app.get("/keyword_search", async (req, res) => {
   try {
     const collection = conn.db.collection("test");
