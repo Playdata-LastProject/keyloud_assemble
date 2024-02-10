@@ -9,6 +9,18 @@ const ScriptDisplay = () => {
   const [Content, setContents] = useState({});
   const [error, setError] = useState(null);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      if (location.state) {
+        setReceivedData(location.state.data);
+        setLoading(false);
+        await getContents(location.state.data.filename);
+      }
+    };
+
+    fetchData();
+  }, [location.state]);
+
   const getContents = async (fileID) => {
     setLoading(true);
     setError(false);
@@ -25,19 +37,11 @@ const ScriptDisplay = () => {
     setLoading(false);
   };
 
-  useEffect(() => {
-    if (location.state) {
-      setReceivedData(location.state.data);
-      setLoading(false);
-      getContents(location.state.data.filename);
-    }
-  }, [location.state]);
-
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  if(error){
+  if (error) {
     return <div>{error}</div>;
   }
 

@@ -20,7 +20,7 @@ async function synonyms(content) {
         });
 
         const chat = generativeModel.startChat({});
-        const chatInput1 = `Please find 2 each synonyms from the following keywords: ${content}
+        const chatInput1 = `For each of the following keywords, please suggest exactly 2 (no more, no less than 2) alternative words that could be used in its place.: ${content}
         Please respond korean with the prefixed with a dash (-).`;
 
         const result1 = await chat.sendMessageStream(chatInput1);

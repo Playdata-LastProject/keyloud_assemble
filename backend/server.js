@@ -7,7 +7,7 @@ const speech2text = require("./speech2text");
 const keywords = require("./keywords");
 const summary = require("./summary");
 const synonyms = require("./synonyms");
-const targetTimestamp = require("./targetTimestamp");
+const { searchInScript, searchInKeywords } = require("./searching");
 
 const app = express();
 
@@ -102,12 +102,9 @@ app.post("/update_summary", async (req, res) => {
     const newSummary = req.body.newSummary;
 
     // 특정 문서 조회 및 summary 필드 업데이트
-    const result = await collection.updateOne(
-      {
-        /* 여기에 원하는 조건을 추가하세요 */
-      },
-      { $set: { summary: newSummary } }
-    );
+    const result = await collection.updateOne({
+      $set: { summary: newSummary },
+    });
 
     if (result.modifiedCount > 0) {
       console.log("Summary updated successfully");
@@ -150,9 +147,8 @@ app.get("/keyword_search", async (req, res) => {
   try {
     const collection = conn.db.collection("test");
 
-    const keyword = req.query.keyword;
-    const regex = new RegExp(keyword, "i"); // 대소문자 구분 없이 검색
-    const resultList = [];
+    const targetWord = req.query.keyword;
+    const regex = new RegExp(targetWord, "i"); // 대소문자 구분 없이 검색
     // MongoDB 쿼리를 통해 파일 검색
     const projection = {
       filename: 1,
@@ -160,23 +156,55 @@ app.get("/keyword_search", async (req, res) => {
       scripts: 1,
       summary: 0,
       keywords: 1,
-      synonyms: 0,
+      synonyms: 1,
       timestamp: 0,
     };
 
-    const searchResults = await collection.find({}, projection).toArray();
+    const data = await collection.find({}, projection).toArray();
 
     console.log("=============================");
-    for (const document of searchResults) {
-      const targetIndex = await targetTimestamp(document.scripts, keyword);
-      if (targetIndex["index"].length > 0) {
-        targetIndex["filename"] = document.filename.toString();
-        targetIndex["keywords"] = document.keywords;
-        resultList.push(targetIndex);
+    const includeInScript = [];
+    const includeInKeywords = [];
+    const includeInSynonyms = [];
+
+    for (const document of data) {
+      const searching = await searchInScript(document.scripts, targetWord);
+      if (searching["index"].length > 0) {
+        searching["filename"] = document.filename.toString();
+        searching["keywords"] = document.keywords;
+        searching["synonyms"] = document.synonyms;
+        includeInScript.push(searching);
+      } else {
+        const searching = await searchInKeywords(document.keywords, targetWord);
+        if (searching["index"].length > 0) {
+          searching["filename"] = document.filename.toString();
+          searching["keywords"] = document.keywords;
+          searching["synonyms"] = document.synonyms;
+          includeInKeywords.push(searching);
+        } else {
+          const searching = await searchInKeywords(
+            document.synonyms,
+            targetWord
+          );
+          if (searching["index"].length > 0) {
+            searching["filename"] = document.filename.toString();
+            searching["keywords"] = document.keywords;
+            searching["synonyms"] = document.synonyms;
+            includeInSynonyms.push(searching);
+          }
+        }
       }
     }
-    console.log(resultList);
-    res.send(resultList);
+
+    const targetSynonyms = await synonyms(targetWord);
+    console.log([includeInScript, includeInKeywords, includeInSynonyms]);
+    res.send([
+      targetSynonyms[0],
+      targetSynonyms[1],
+      includeInScript,
+      includeInKeywords,
+      includeInSynonyms,
+    ]);
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
     res.status(500).json({ error: "Internal Server Error" });
