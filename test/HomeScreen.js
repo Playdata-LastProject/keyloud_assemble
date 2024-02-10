@@ -65,6 +65,7 @@ const HomeScreen = () => {
   const [customFileName, setCustomFileName] = useState("");
   const [selectedFolder, setSelectedFolder] = useState("");
   const [uploadedFilesState, setUploadedFilesState] = useState({});
+  const [folderVisibility, setFolderVisibility] = useState({});
 
   const handleUploadButtonClick = () => {
     setUploadMenuOpen(!isUploadMenuOpen);
@@ -111,9 +112,19 @@ const HomeScreen = () => {
     try {
       const response = await axios.get(`http://localhost:5000/get_files?folder=${encodeURIComponent(folderName)}`);
       const files = response.data;
-      console.log(files); // 서버에서 받아온 파일 목록 출력 또는 상태 업데이트 등 필요한 작업 수행
-      setFolderFiles({ ...folderFiles, [folderName]: files });
-      console.log('Folder Files:', folderFiles); // 파일 목록을 콘솔에 출력
+      console.log(files);
+
+      // 클릭한 폴더의 가시성을 토글합니다.
+      setFolderVisibility((prevVisibility) => ({
+        ...prevVisibility,
+        [folderName]: !prevVisibility[folderName],
+      }));
+      
+      // 파일 목록 상태를 업데이트합니다.
+      setFolderFiles((prevFiles) => ({
+        ...prevFiles,
+        [folderName]: files,
+      }));
     } catch (error) {
       console.error('Error fetching files:', error);
       // 에러 처리 로직 추가
@@ -188,18 +199,20 @@ const HomeScreen = () => {
             </div>
             <div className="folder-name">{folder.name}</div>
           </div>
-          <div className="uploaded-files-container">
-            {folderFiles[folder.name] && folderFiles[folder.name].map((file, index) => (
-              <div key={index} className="uploaded-file">
-                <img src={file.icon} alt="File Icon" className="file-icon" />
-                <div className="file-name">{file.filename}</div>
-                <div className="upload-date">{file.uploadDate}</div>
-              </div>
-            ))}
-          </div>
+          {folderVisibility[folder.name] && (
+            <div className="uploaded-files-container">
+              {folderFiles[folder.name] && folderFiles[folder.name].map((file, index) => (
+                <div key={index} className="uploaded-file">
+                  <img src="/images/file-icon.png" alt="File Icon" className="file-icon" />
+                  <div className="file-name">{file.filename}</div>
+                  <div className="upload-date">{file.uploadDate}</div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       ))}
-
+  
       <button className="upload-button" onClick={handleUploadButtonClick}>
         <img
           src="/images/upload.png"
@@ -207,7 +220,7 @@ const HomeScreen = () => {
           style={{ width: "40px", height: "35px" }}
         />
       </button>
-
+  
       {isUploadMenuOpen && (
         <div className="upload-menu">
           <button
@@ -224,7 +237,7 @@ const HomeScreen = () => {
           </button>
         </div>
       )}
-
+  
       {isCreateFolderPopupOpen && (
         <div className="create-folder-popup">
           <input
@@ -239,7 +252,7 @@ const HomeScreen = () => {
           </button>
         </div>
       )}
-
+  
       {isFileUploadPopupOpen && (
         <div className="file-upload-popup">
           <input
@@ -273,7 +286,7 @@ const HomeScreen = () => {
           </button>
         </div>
       )}
-
+  
       {isRenamePopupOpen && (
         <div className="rename-popup">
           <input
