@@ -12,7 +12,10 @@ const { searchInScript, searchInKeywords } = require("./searching");
 const app = express();
 
 // CORS 미들웨어 추가
-app.use(cors());
+  app.use(cors({
+    origin: 'http://localhost:3000', // React 서버의 주소
+    credentials: true, // 필요에 따라 설정
+  }));
 
 // MongoDB 연결
 mongoose.connect("mongodb://localhost:27017/keyloud");
@@ -241,6 +244,6 @@ app.get("/contents", async (req, res) => {
   }
 });
 
-app.listen(5000, () => {
+app.listen(5000, '0.0.0.0', () => {
   console.log("Server started...");
 });

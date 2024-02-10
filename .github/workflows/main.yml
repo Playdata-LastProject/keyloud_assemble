@@ -6,9 +6,9 @@ on:
   push:
     branches:
       - main
-  #pull_request:
-    #branches:
-      #- main
+  pull_request:
+    branches:
+      - main
 
 
 jobs:
@@ -25,15 +25,11 @@ jobs:
           username: ${{ secrets.USER }} # 내가 변수로 저장한 User
           script: |
             cd keyloud_assemble
-            git pull git@github.com:Playdata-LastProject/keyloud_assemble.git
+            git pull origin main
 
-            cd backend
-            npm install
-
-            cd ..
             cd frontend
-            npm install
-
-            cd ..
+            npm run build
+            
             pm2 restart server
             pm2 restart client
+            
