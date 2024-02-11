@@ -36,7 +36,7 @@ const ScriptDisplay = () => {
 
     try {
       const response = await axios.get(
-        `http://localhost:5000/contents?fileName=${encodeURIComponent(fileID)}`
+        `http://52.78.157.198:5000/contents?fileName=${encodeURIComponent(fileID)}`
       );
       setContents((prevContent) => ({ ...prevContent, ...response.data })); // JSON 파싱 없이 데이터 할당
     } catch (error) {
@@ -57,12 +57,64 @@ const ScriptDisplay = () => {
   const handleEdit = (fileName) => {
     // TODO: 파일 수정 로직 추가
     console.log(`Edit file: ${fileName}`);
+
+    const editEndpoint = 'http://52.78.157.198:5000/update_scripts';
+
+    // Sample request using fetch
+    fetch(editEndpoint, {
+      method: 'PUT', // Use 'PUT' method for editing
+      headers: {
+        'Content-Type': 'application/json',
+        // Add any other headers if needed
+      },
+      body: JSON.stringify({ fileName }), // Send the file name or other necessary data
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Editing file failed');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Handle success response if needed
+        console.log('File edit success', data);
+      })
+      .catch(error => {
+        // Handle error if needed
+        console.error('File edit failed', error);
+      });
   };
 
   // 파일 삭제 이벤트 핸들러
   const handleDelete = (fileName) => {
     // TODO: 파일 삭제 로직 추가
     console.log(`Delete file: ${fileName}`);
+
+    const deleteEndpoint = 'http://52.78.157.198:5000/move_to_trash';
+
+    // Sample request using fetch
+    fetch(deleteEndpoint, {
+      method: 'DELETE', // Use 'DELETE' method for deletion
+      headers: {
+        'Content-Type': 'application/json',
+        // Add any other headers if needed
+      },
+      body: JSON.stringify({ fileName }), // Send the file name or other necessary data
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Deleting file failed');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Handle success response if needed
+        console.log('File deletion success', data);
+      })
+      .catch(error => {
+        // Handle error if needed
+        console.error('File deletion failed', error);
+      });
   };
 
   // 데이터가 존재하는 경우에 대한 처리
