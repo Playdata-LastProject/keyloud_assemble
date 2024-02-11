@@ -3,6 +3,7 @@ import axios from "axios";
 //import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import _ from "lodash";
+import "./styles/KeywordResult.css"
 
 const KeywordSearchPage = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -77,7 +78,7 @@ const KeywordSearchPage = () => {
                     key={result.filename}
                     onClick={() => handleItemClick(upperIndex, index)}
                   >
-                    <p>파일명: {result.filename}</p>
+                    <p className="file-name">파일명: {result.filename}</p>
                     <ul>
                       {result.sentence.map((sentence, index) => (
                         <li key={index}>{sentence}</li>
