@@ -64,19 +64,6 @@ const ScriptDisplay = () => {
       <h2>Received Data</h2>
       <p>file name: {receivedData.filename}</p>
       <p>script: {Content.scripts}</p>
-      <ul>
-        {Content.timestamp.map((sentence, index) => (
-          <li key={index}>{sentence}</li>
-        ))}
-      </ul>
-      <div className="file-actions">
-            <button onClick={handleEdit} className="edit-button">
-              수정
-            </button>
-            <button onClick={handleDelete} className="delete-button">
-              삭제
-            </button>
-          </div>
       {type === 0 && (
         <ul>
           {receivedData.index.map((index) => (
@@ -98,6 +85,14 @@ const ScriptDisplay = () => {
           ))}
         </ul>
       )}
+      <div className="file-actions">
+            <button onClick={handleEdit} className="edit-button">
+              수정
+            </button>
+            <button onClick={handleDelete} className="delete-button">
+              삭제
+            </button>
+        </div>
     </div>
   );
 };
