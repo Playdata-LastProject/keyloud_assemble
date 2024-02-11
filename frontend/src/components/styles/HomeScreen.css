@@ -16,7 +16,7 @@
 .folder-name {
   font-size: 15px;
 }
-  
+
 /* 업로드 버튼 스타일 */
 .upload-button {
   position: fixed;
@@ -45,7 +45,7 @@
 
 /* 업로드 메뉴 버튼 스타일 */
 .upload-menu-button {
-  background-color:  #692498;
+  background-color: #692498;
   color: #ffffff;
   border: none;
   border-radius: 5px;
@@ -53,10 +53,8 @@
   margin-top: 5px;
   cursor: pointer;
 }
-  
- 
 
-  /* 폴더 생성 팝업 스타일 */
+/* 폴더 생성 팝업 스타일 */
 .create-folder-popup {
   position: fixed;
   top: 50%;
@@ -72,7 +70,7 @@
 .create-folder-popup input {
   padding: 8px;
   margin-bottom: 10px;
-  margin-right: 5px;
+  /*margin-right: 5px;*/
   width: 100%;
 }
 
@@ -170,4 +168,11 @@
   background-color: #007bff;
   color: white;
   border: none;
+}
+
+.close-button {
+  float: right;
+  margin-right: -20px;
+  margin-top: -20px;
+  margin-bottom: 10px;
 }

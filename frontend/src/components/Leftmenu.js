@@ -5,7 +5,13 @@ import "../App.css";
 const LeftMenu = ({ onTrashPage }) => {
   return (
     <div className="left-menu">
-      <Link to="/keyword">키워드 검색</Link>
+      <Link
+        to={{
+          pathname: `/keyword/search`,
+        }}
+      >
+        키워드 검색
+      </Link>
       <div style={{ marginTop: "20px" }}>
         <Link to="/trash">휴지통</Link>
       </div>

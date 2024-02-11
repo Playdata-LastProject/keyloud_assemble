@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 //import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import _ from "lodash";
-import "./styles/KeywordResult.css"
+import "./styles/KeywordResult.css";
 
 const KeywordSearchPage = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -14,8 +14,15 @@ const KeywordSearchPage = () => {
   const [targetSynonyms, setTargetSynonyms] = useState([]);
   const [onlySearchResults, setOnlySearchResults] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSearch = async () => {
+    const currentPath = location.pathname;
+    const updatedPath = `${currentPath}?keyword=${encodeURIComponent(
+      searchKeyword
+    )}`;
+    navigate(updatedPath);
+
     setLoading(true);
     setError(null);
 
