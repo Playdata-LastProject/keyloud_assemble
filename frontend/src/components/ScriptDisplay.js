@@ -5,6 +5,7 @@ import axios from "axios";
 const ScriptDisplay = () => {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
+  const [type, setType] = useState(0);
   const [receivedData, setReceivedData] = useState({});
   const [Content, setContents] = useState({});
   const [error, setError] = useState(null);
@@ -13,6 +14,7 @@ const ScriptDisplay = () => {
     const fetchData = async () => {
       if (location.state) {
         setReceivedData(location.state.data);
+        setType(location.state.type);
         setLoading(false);
         await getContents(location.state.data.filename);
       }
@@ -51,11 +53,27 @@ const ScriptDisplay = () => {
       <h2>Received Data</h2>
       <p>file name: {receivedData.filename}</p>
       <p>script: {Content.scripts}</p>
-      <ul>
-        {Content.timestamp.map((sentence, index) => (
-          <li key={index}>{sentence}</li>
-        ))}
-      </ul>
+      {type === 0 && (
+        <ul>
+          {receivedData.index.map((index) => (
+            <li key={index}>{Content.timestamp[index]}</li>
+          ))}
+        </ul>
+      )}
+      {type === 1 && (
+        <ul>
+          {receivedData.index.map((index) => (
+            <li key={index}>{Content.keywords[index]}</li>
+          ))}
+        </ul>
+      )}
+      {type === 2 && (
+        <ul>
+          {receivedData.index.map((index) => (
+            <li key={index}>{Content.synonyms[index]}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
