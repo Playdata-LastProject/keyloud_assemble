@@ -190,20 +190,13 @@ app.delete("/move_to_trash", async (req, res) => {
       });
     }
 
-    client.close();
+
   } catch (error) {
     console.error("Error during document deletion:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
-
-    client.close();
-  } catch (error) {
-    console.error("Error during document deletion:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
 
 app.delete("/delete_files", async (req, res) => {
   try {
@@ -222,7 +215,7 @@ app.delete("/delete_files", async (req, res) => {
       });
     }
 
-    client.close();
+
   } catch (error) {
     console.error("Error during document deletion:", error);
     res.status(500).json({ message: "Internal Server Error" });
