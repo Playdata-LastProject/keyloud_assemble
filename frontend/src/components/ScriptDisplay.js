@@ -45,6 +45,17 @@ const ScriptDisplay = () => {
     return <div>{error}</div>;
   }
 
+  const handleEdit = (fileName) => {
+    // TODO: 파일 수정 로직 추가
+    console.log(`Edit file: ${fileName}`);
+  };
+
+  // 파일 삭제 이벤트 핸들러
+  const handleDelete = (fileName) => {
+    // TODO: 파일 삭제 로직 추가
+    console.log(`Delete file: ${fileName}`);
+  };
+
   // 데이터가 존재하는 경우에 대한 처리
   return (
     <div>
@@ -56,6 +67,14 @@ const ScriptDisplay = () => {
           <li key={index}>{sentence}</li>
         ))}
       </ul>
+      <div className="file-actions">
+            <button onClick={handleEdit} className="edit-button">
+              수정
+            </button>
+            <button onClick={handleDelete} className="delete-button">
+              삭제
+            </button>
+          </div>
     </div>
   );
 };
