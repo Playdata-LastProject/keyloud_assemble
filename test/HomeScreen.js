@@ -24,7 +24,7 @@ const HomeScreen = () => {
   const [isRenamePopupOpen, setRenamePopupOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [folderFiles, setFolderFiles] = useState({});
-
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   useEffect(() => {
     // 페이지 로드 시 로컬 스토리지에서 uploadedFiles 값을 가져옴
@@ -97,20 +97,36 @@ const HomeScreen = () => {
 
       const response = await axios.post("http://localhost:5000/upload_files", formData);
 
-      const data = await response.json();
+      //const data = await response.json();
       console.log(response.data.message);
     } catch (error) {
       console.error("Error uploading file:", error);
     }
   };
 
-  const handleNavigateToKeywordResult = () => {
-    navigate(`/keyword-result?keyword=${userKeyword}`);
+  // 폴더 필터링
+  // 폴더 필터링
+  const filteredFolders = addedFolders.filter((folder) =>
+    folder.name.toLowerCase().includes(searchKeyword.toLowerCase())
+  );
+
+  // 파일 필터링
+  const filteredFiles = (folderName) =>
+    folderFiles[folderName]
+      ? folderFiles[folderName].filter((file) =>
+          file.filename.toLowerCase().includes(searchKeyword.toLowerCase())
+        )
+      : [];
+
+  const handleSearchButtonClick = () => {
+    setSearchKeyword(userKeyword);
   };
 
   const handleFolderIconClick = async (folderName) => {
     try {
-      const response = await axios.get(`http://localhost:5000/get_files?folder=${encodeURIComponent(folderName)}`);
+      const response = await axios.get(
+        `http://localhost:5000/get_files?folder=${encodeURIComponent(folderName)}`
+      );
       const files = response.data;
       console.log(files);
 
@@ -119,7 +135,7 @@ const HomeScreen = () => {
         ...prevVisibility,
         [folderName]: !prevVisibility[folderName],
       }));
-      
+
       // 파일 목록 상태를 업데이트합니다.
       setFolderFiles((prevFiles) => ({
         ...prevFiles,
@@ -130,7 +146,7 @@ const HomeScreen = () => {
       // 에러 처리 로직 추가
     }
   };
-  
+
   const handleCreateFolderButtonClick = () => {
     setCreateFolderPopupOpen(true);
   };
@@ -139,12 +155,17 @@ const HomeScreen = () => {
     if (newFolderName.trim() !== "") {
       const newFolder = { name: newFolderName, id: Date.now() };
       setAddedFolders((prevFolders) => [...prevFolders, newFolder]);
-      localStorage.setItem("addedFolders", JSON.stringify([...addedFolders, newFolder]));
+      localStorage.setItem(
+        "addedFolders",
+        JSON.stringify([...addedFolders, newFolder])
+      );
       addFolder(newFolder);
 
       // 서버에 새로운 폴더 정보 전송
       try {
-        await axios.post("http://localhost:5000/create_folder", { folder: newFolder });
+        await axios.post("http://localhost:5000/create_folder", {
+          folder: newFolder,
+        });
       } catch (error) {
         console.error('Error creating folder:', error);
         // 에러 처리 로직 추가
@@ -153,11 +174,6 @@ const HomeScreen = () => {
       setNewFolderName("");
     }
     setCreateFolderPopupOpen(false);
-  };
-
-  const handleItemClick = (item) => {
-    setSelectedItem(item);
-    setNewName(item.name);
   };
 
   const handleRename = () => {
@@ -184,7 +200,17 @@ const HomeScreen = () => {
 
   return (
     <div>
-      {addedFolders.map((folder) => (
+      <input
+        type="text"
+        placeholder="전체검색창(빠른검색)"
+        className="search-input"
+        value={userKeyword}
+        onChange={(e) => setUserKeyword(e.target.value)}
+      />
+      <button onClick={handleSearchButtonClick}>검색</button>
+
+      {filteredFolders.map(folder => (
+        // 필터링된 폴더 렌더링
         <div key={folder.id}>
           <div
             className="folder-content"
@@ -202,6 +228,7 @@ const HomeScreen = () => {
           {folderVisibility[folder.name] && (
             <div className="uploaded-files-container">
               {folderFiles[folder.name] && folderFiles[folder.name].map((file, index) => (
+                // 필터링된 파일 렌더링
                 <div key={index} className="uploaded-file">
                   <img src="/images/file-icon.png" alt="File Icon" className="file-icon" />
                   <div className="file-name">{file.filename}</div>
@@ -212,7 +239,7 @@ const HomeScreen = () => {
           )}
         </div>
       ))}
-  
+
       <button className="upload-button" onClick={handleUploadButtonClick}>
         <img
           src="/images/upload.png"
@@ -220,7 +247,7 @@ const HomeScreen = () => {
           style={{ width: "40px", height: "35px" }}
         />
       </button>
-  
+
       {isUploadMenuOpen && (
         <div className="upload-menu">
           <button
@@ -237,7 +264,7 @@ const HomeScreen = () => {
           </button>
         </div>
       )}
-  
+
       {isCreateFolderPopupOpen && (
         <div className="create-folder-popup">
           <input
@@ -252,7 +279,7 @@ const HomeScreen = () => {
           </button>
         </div>
       )}
-  
+
       {isFileUploadPopupOpen && (
         <div className="file-upload-popup">
           <input
@@ -286,7 +313,7 @@ const HomeScreen = () => {
           </button>
         </div>
       )}
-  
+
       {isRenamePopupOpen && (
         <div className="rename-popup">
           <input

@@ -24,6 +24,38 @@ const HomeScreen = () => {
   const [isRenamePopupOpen, setRenamePopupOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [folderFiles, setFolderFiles] = useState({});
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [filteredFilesObj, setFilteredFilesObj] = useState({});
+
+    // 폴더와 파일 필터링
+  const filteredFiles = (folderName) =>
+    folderFiles[folderName]
+      ? folderFiles[folderName].filter((file) =>
+          file.filename.toLowerCase().includes(searchKeyword.toLowerCase())
+        )
+      : [];
+
+  const filteredFoldersAndFiles = addedFolders.filter((folder) =>
+    folder.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+    filteredFiles(folder.name).some((file) =>
+      file.filename.toLowerCase().includes(searchKeyword.toLowerCase())
+    )
+  );
+
+  useEffect(() => {
+
+    // 파일 필터링
+    const calculateFilteredFiles = () => {
+      const newFilteredFilesObj = {};
+      addedFolders.forEach((folder) => {
+        newFilteredFilesObj[folder.name] = filteredFiles(folder.name);
+      });
+      setFilteredFilesObj(newFilteredFilesObj);
+    };
+  
+    // 초기 로딩 시에도 호출
+    calculateFilteredFiles();
+  }, [addedFolders, folderFiles, searchKeyword]);
 
 
   useEffect(() => {
@@ -45,9 +77,30 @@ const HomeScreen = () => {
   }, [setUploadedFiles, setAddedFolders]);
 
   useEffect(() => {
+    const storedFolderFiles = localStorage.getItem("folderFiles");
+    if (storedFolderFiles) {
+      setFolderFiles(JSON.parse(storedFolderFiles));
+    }
+
+    const storedFolders = localStorage.getItem("addedFolders");
+    if (storedFolders) {
+      setAddedFolders(JSON.parse(storedFolders));
+    } else {
+      setAddedFolders([{ name: "최근 업로드 폴더", id: 1 }]);
+      localStorage.setItem(
+        "addedFolders",
+        JSON.stringify([{ name: "최근 업로드 폴더", id: 1 }])
+      );
+    }
+  }, [setFolderFiles, setAddedFolders]);
+  
+  
+
+  useEffect(() => {
     const handleBeforeUnload = () => {
       localStorage.setItem("uploadedFiles", JSON.stringify(uploadedFiles));
       localStorage.setItem("addedFolders", JSON.stringify(addedFolders));
+      localStorage.setItem("folderFiles", JSON.stringify(folderFiles));
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
@@ -55,7 +108,7 @@ const HomeScreen = () => {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [uploadedFiles, addedFolders]);
+  }, [uploadedFiles, addedFolders, folderFiles]);
 
   const [isCreateFolderPopupOpen, setCreateFolderPopupOpen] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
@@ -97,20 +150,29 @@ const HomeScreen = () => {
 
       const response = await axios.post("http://localhost:5000/upload_files", formData);
 
-      const data = await response.json();
+      //const data = await response.json();
       console.log(response.data.message);
     } catch (error) {
       console.error("Error uploading file:", error);
     }
   };
 
-  const handleNavigateToKeywordResult = () => {
-    navigate(`/keyword-result?keyword=${userKeyword}`);
+  // 폴더 필터링
+  // 폴더 필터링
+  const filteredFolders = addedFolders.filter((folder) =>
+    folder.name.toLowerCase().includes(searchKeyword.toLowerCase())
+  );
+
+  
+  const handleSearchButtonClick = () => {
+    setSearchKeyword(userKeyword);
   };
 
   const handleFolderIconClick = async (folderName) => {
     try {
-      const response = await axios.get(`http://localhost:5000/get_files?folder=${encodeURIComponent(folderName)}`);
+      const response = await axios.get(
+        `http://localhost:5000/get_files?folder=${encodeURIComponent(folderName)}`
+      );
       const files = response.data;
       console.log(files);
 
@@ -119,7 +181,7 @@ const HomeScreen = () => {
         ...prevVisibility,
         [folderName]: !prevVisibility[folderName],
       }));
-      
+
       // 파일 목록 상태를 업데이트합니다.
       setFolderFiles((prevFiles) => ({
         ...prevFiles,
@@ -130,7 +192,7 @@ const HomeScreen = () => {
       // 에러 처리 로직 추가
     }
   };
-  
+
   const handleCreateFolderButtonClick = () => {
     setCreateFolderPopupOpen(true);
   };
@@ -139,12 +201,17 @@ const HomeScreen = () => {
     if (newFolderName.trim() !== "") {
       const newFolder = { name: newFolderName, id: Date.now() };
       setAddedFolders((prevFolders) => [...prevFolders, newFolder]);
-      localStorage.setItem("addedFolders", JSON.stringify([...addedFolders, newFolder]));
+      localStorage.setItem(
+        "addedFolders",
+        JSON.stringify([...addedFolders, newFolder])
+      );
       addFolder(newFolder);
 
       // 서버에 새로운 폴더 정보 전송
       try {
-        await axios.post("http://localhost:5000/create_folder", { folder: newFolder });
+        await axios.post("http://localhost:5000/create_folder", {
+          folder: newFolder,
+        });
       } catch (error) {
         console.error('Error creating folder:', error);
         // 에러 처리 로직 추가
@@ -153,11 +220,6 @@ const HomeScreen = () => {
       setNewFolderName("");
     }
     setCreateFolderPopupOpen(false);
-  };
-
-  const handleItemClick = (item) => {
-    setSelectedItem(item);
-    setNewName(item.name);
   };
 
   const handleRename = () => {
@@ -184,7 +246,16 @@ const HomeScreen = () => {
 
   return (
     <div>
-      {addedFolders.map((folder) => (
+      <input
+        type="text"
+        placeholder="전체검색창(빠른검색)"
+        className="search-input"
+        value={userKeyword}
+        onChange={(e) => setUserKeyword(e.target.value)}
+      />
+      <button onClick={handleSearchButtonClick}>검색</button>
+  
+      {filteredFoldersAndFiles.map((folder) => (
         <div key={folder.id}>
           <div
             className="folder-content"
@@ -201,9 +272,13 @@ const HomeScreen = () => {
           </div>
           {folderVisibility[folder.name] && (
             <div className="uploaded-files-container">
-              {folderFiles[folder.name] && folderFiles[folder.name].map((file, index) => (
+              {filteredFiles(folder.name).map((file, index) => (
                 <div key={index} className="uploaded-file">
-                  <img src="/images/file-icon.png" alt="File Icon" className="file-icon" />
+                  <img
+                    src="/images/file-icon.png"
+                    alt="File Icon"
+                    className="file-icon"
+                  />
                   <div className="file-name">{file.filename}</div>
                   <div className="upload-date">{file.uploadDate}</div>
                 </div>
@@ -213,6 +288,8 @@ const HomeScreen = () => {
         </div>
       ))}
   
+
+
       <button className="upload-button" onClick={handleUploadButtonClick}>
         <img
           src="/images/upload.png"
@@ -220,7 +297,7 @@ const HomeScreen = () => {
           style={{ width: "40px", height: "35px" }}
         />
       </button>
-  
+
       {isUploadMenuOpen && (
         <div className="upload-menu">
           <button
@@ -237,7 +314,7 @@ const HomeScreen = () => {
           </button>
         </div>
       )}
-  
+
       {isCreateFolderPopupOpen && (
         <div className="create-folder-popup">
           <input
@@ -252,7 +329,7 @@ const HomeScreen = () => {
           </button>
         </div>
       )}
-  
+
       {isFileUploadPopupOpen && (
         <div className="file-upload-popup">
           <input
@@ -286,7 +363,7 @@ const HomeScreen = () => {
           </button>
         </div>
       )}
-  
+
       {isRenamePopupOpen && (
         <div className="rename-popup">
           <input
