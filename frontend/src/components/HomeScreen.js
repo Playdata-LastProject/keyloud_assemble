@@ -4,8 +4,10 @@ import { useContext } from "react";
 import { AppContext } from "../AppContext.js";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import Header from '../components/Header'; 
+import PropTypes from 'prop-types';
 
-const HomeScreen = () => {
+const HomeScreen = ({onSearch}) => {
   const navigate = useNavigate();
   const [searchResults, setSearchResults] = useState([]);
   const {
@@ -41,6 +43,12 @@ const HomeScreen = () => {
       file.filename.toLowerCase().includes(searchKeyword.toLowerCase())
     )
   );
+
+  const handleSearch = async (keyword) => {
+    // 검색 결과를 처리하는 로직 추가
+    setUserKeyword(keyword);
+    setSearchKeyword(keyword);
+  };
 
   useEffect(() => {
 
@@ -165,7 +173,7 @@ const HomeScreen = () => {
 
   
   const handleSearchButtonClick = () => {
-    setSearchKeyword(userKeyword);
+    onSearch(userKeyword);
   };
 
   const handleFolderIconClick = async (folderName) => {
@@ -246,14 +254,8 @@ const HomeScreen = () => {
 
   return (
     <div>
-      <input
-        type="text"
-        placeholder="전체검색창(빠른검색)"
-        className="search-input"
-        value={userKeyword}
-        onChange={(e) => setUserKeyword(e.target.value)}
-      />
-      <button onClick={handleSearchButtonClick}>검색</button>
+      {/* Header 컴포넌트를 사용하고 onSearch prop으로 handleSearch 함수를 전달 */}
+      <Header onSearch={handleSearch} />
   
       {filteredFoldersAndFiles.map((folder) => (
         <div key={folder.id}>
