@@ -12,10 +12,7 @@ const { searchInScript, searchInKeywords } = require("./searching");
 const app = express();
 
 // CORS 미들웨어 추가
-  app.use(cors({
-    origin: 'http://localhost:3000', // React 서버의 주소
-    credentials: true, // 필요에 따라 설정
-  }));
+  app.use(cors());
 
 // MongoDB 연결
 mongoose.connect("mongodb://localhost:27017/keyloud");
@@ -55,7 +52,6 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       keywords: keywords_result,
       synonyms: synonyms_result,
       timestamp: timestamp_result,
-      trashflag: 0,
       // 기타 필요한 파일 정보들 ..추가 -> erd보고 추가
     };
 
