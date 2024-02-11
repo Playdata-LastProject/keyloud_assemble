@@ -155,6 +155,56 @@ app.delete("/delete_all_files", async (req, res) => {
   }
 });
 
+app.delete("/move_to_trash", async (req, res) => {
+  try {
+    const documentName = req.body.documentName;
+
+    // 파일을 'files' 컬렉션에서 조회하여 데이터를 얻어옴
+    const fileData = await db
+      .collection("files")
+      .findOne({ filename: documentName });
+
+    if (fileData) {
+      // 파일을 'trash' 컬렉션으로 이동
+      const moveToTrashResult = await db
+        .collection("trash")
+        .insertOne(fileData);
+
+      if (moveToTrashResult.insertedCount === 1) {
+        // 파일을 'files' 컬렉션에서 삭제
+        const deleteResult = await db
+          .collection("files")
+          .deleteOne({ filename: documentName });
+
+        if (deleteResult.deletedCount === 1) {
+          res.status(200).json({ message: "문서가 성공적으로 삭제되고 휴지통으로 이동되었습니다." });
+        } else {
+          res.status(500).json({ message: "휴지통으로 이동한 문서를 'files' 컬렉션에서 삭제하는 중 오류가 발생했습니다." });
+        }
+      } else {
+        res.status(500).json({ message: "휴지통으로 이동 중 오류가 발생했습니다." });
+      }
+    } else {
+      res.status(404).json({
+        message: "삭제할 문서를 찾지 못했거나 데이터를 가져오는 중 오류가 발생했습니다.",
+      });
+    }
+
+    client.close();
+  } catch (error) {
+    console.error("Error during document deletion:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+
+    client.close();
+  } catch (error) {
+    console.error("Error during document deletion:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 app.delete("/delete_files", async (req, res) => {
   try {
     const documentName = req.body.documentName;

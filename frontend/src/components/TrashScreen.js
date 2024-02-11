@@ -8,7 +8,7 @@ function TrashScreen() {
   useEffect(() => {
     const fetchTrashData = async () => {
       try {
-        const response = await fetch('http://localhost:5000/trash_files'); // 백엔드 API 엔드포인트로 수정
+        const response = await fetch('http://52.78.157.198:5000/trash_files'); // 백엔드 API 엔드포인트로 수정
         if (!response.ok) {
           throw new Error('휴지통 데이터를 가져오지 못했습니다.');
         }
