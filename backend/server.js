@@ -12,10 +12,7 @@ const { searchInScript, searchInKeywords } = require("./searching");
 const app = express();
 
 // CORS 미들웨어 추가
-  app.use(cors({
-    origin: 'http://localhost:3000', // React 서버의 주소
-    credentials: true, // 필요에 따라 설정
-  }));
+  app.use(cors());
 
 // MongoDB 연결
 mongoose.connect("mongodb://localhost:27017/keyloud");
@@ -122,6 +119,42 @@ app.post("/update_summary", async (req, res) => {
   }
 });
 
+// trash URL로 요청이 들어왔을 때의 처리
+app.get("/trash_files", async (req, res) => {
+  try {
+    const collection = conn.db.collection("trash");
+
+    // trash collection의 모든 문서 가져오기
+    const trashData = await collection.find({}).toArray();
+
+    // 가져온 데이터를 클라이언트에 응답
+    res.json(trashData);
+
+    console.log("Trash files retrieved successfully");
+  } catch (error) {
+    console.error("Error during retrieving trash files:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.delete("/delete_all_files", async (req, res) => {
+  try {
+    // trash collection의 모든 데이터 삭제
+    const result = await conn.db.collection("trash").deleteMany({});
+
+    if (result.deletedCount > 0) {
+      console.log("All trash files deleted successfully");
+      res.status(200).json({ message: "All trash files deleted successfully" });
+    } else {
+      console.log("No trash files found or no deletion needed");
+      res.status(404).json({ message: "No trash files found or no deletion needed" });
+    }
+  } catch (error) {
+    console.error("Error during deleting all trash files:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 app.delete("/delete_files", async (req, res) => {
   try {
     const documentName = req.body.documentName;
@@ -160,7 +193,6 @@ app.get("/keyword_search", async (req, res) => {
       summary: 0,
       keywords: 1,
       synonyms: 1,
-      timestamp: 0,
     };
 
     const data = await collection.find({}, projection).toArray();
