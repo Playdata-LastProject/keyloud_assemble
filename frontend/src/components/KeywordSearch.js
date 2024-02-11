@@ -39,7 +39,10 @@ const KeywordSearchPage = () => {
   const handleItemClick = (upperIndex, index) => {
     const filename = onlySearchResults[upperIndex][index].filename;
     navigate(`/details/${filename}`, {
-      state: { data: onlySearchResults[upperIndex][index] },
+      state: {
+        data: onlySearchResults[upperIndex][index],
+        type: upperIndex,
+      },
     });
   };
 

@@ -5,6 +5,7 @@ import axios from "axios";
 const ScriptDisplay = () => {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
+  const [type, setType] = useState(0);
   const [receivedData, setReceivedData] = useState({});
   const [Content, setContents] = useState({});
   const [error, setError] = useState(null);
@@ -13,6 +14,7 @@ const ScriptDisplay = () => {
     const fetchData = async () => {
       if (location.state) {
         setReceivedData(location.state.data);
+        setType(location.state.type);
         setLoading(false);
         await getContents(location.state.data.filename);
       }
@@ -75,6 +77,27 @@ const ScriptDisplay = () => {
               삭제
             </button>
           </div>
+      {type === 0 && (
+        <ul>
+          {receivedData.index.map((index) => (
+            <li key={index}>{Content.timestamp[index]}</li>
+          ))}
+        </ul>
+      )}
+      {type === 1 && (
+        <ul>
+          {receivedData.index.map((index) => (
+            <li key={index}>{Content.keywords[index]}</li>
+          ))}
+        </ul>
+      )}
+      {type === 2 && (
+        <ul>
+          {receivedData.index.map((index) => (
+            <li key={index}>{Content.synonyms[index]}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
