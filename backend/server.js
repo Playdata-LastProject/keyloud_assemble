@@ -78,11 +78,9 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    const originalName = req.file.originalname;
+    fs.writeFileSync(`./uploads/${req.file.originalname}`, req.file.buffer);
 
-    fs.writeFileSync(`./uploads/${originalName}`, req.file.buffer);
-
-    const copy_path = "./uploads/" + originalName;
+    const copy_path = "./uploads/" + req.file.originalname;
 
     const s2t_result = await speech2text(copy_path);
 
@@ -98,7 +96,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       folderName: req.body.selectedFolder,
       filename: customName,
       content: req.file.buffer, // 바이너리 데이터로 저장
-      mimeType: originalName.split(".").pop(),
+      mimeType: mime.lookup(req.file.buffer),
       scripts: text_result,
       summary: summary_result,
       keywords: keywords_result,
@@ -112,7 +110,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
     res.json({ message: "File uploaded successfully" });
     console.log("File uploaded successfully");
 
-    fs.unlinkSync(`./uploads/${originalName}`);
+    fs.unlinkSync(`./uploads/${req.file.originalname}`);
   } catch (error) {
     console.error("Error during file upload:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -225,13 +223,13 @@ app.delete("/move_to_trash", async (req, res) => {
         .collection("trash")
         .insertOne(fileData);
 
-      if (moveToTrashResult.acknowledged) {
+      if (moveToTrashResult.insertedCount > 0) {
         // 파일을 'files' 컬렉션에서 삭제
         const deleteResult = await conn.db
           .collection("files")
           .deleteOne({ filename: documentName });
 
-        if (deleteResult.acknowledged) {
+        if (deleteResult.deletedCount === 1) {
           res.status(200).json({
             message: "문서가 성공적으로 삭제되고 휴지통으로 이동되었습니다.",
           });
