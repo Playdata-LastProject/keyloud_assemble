@@ -232,8 +232,9 @@ app.delete("/move_to_trash", async (req, res) => {
         .insertOne(fileData);
 
       console.log("Move to trash result:", moveToTrashResult);
+      console.log("Move to trash count:", moveToTrashResult.insertedCount);
 
-      if (moveToTrashResult.insertedCount > 0) {
+      if (moveToTrashResult.acknowledged) {
         // 파일을 'files' 컬렉션에서 삭제
         const deleteResult = await conn.db
           .collection("files")
