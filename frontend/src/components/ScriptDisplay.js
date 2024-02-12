@@ -38,7 +38,9 @@ const ScriptDisplay = () => {
 
     try {
       const response = await axios.get(
-        `http://localhost:5000/contents?fileName=${encodeURIComponent(fileID)}`
+        `http://52.78.157.198:5000/contents?fileName=${encodeURIComponent(
+          fileID
+        )}`
       );
       setContents((prevContent) => ({ ...prevContent, ...response.data })); // JSON 파싱 없이 데이터 할당
       const splitScripts = response.data.scripts.split(" ");
