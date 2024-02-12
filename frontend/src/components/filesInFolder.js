@@ -1,42 +1,58 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import "./styles/HomeScreen.css";
-import { useContext } from "react";
 import { AppContext } from "../AppContext.js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
-const HomeScreen = () => {
+const FilesInFolder = () => {
   const navigate = useNavigate();
-  const { uploadedFiles, addFolder, setUploadedFiles } = useContext(AppContext);
+  const location = useLocation();
+  const [searchResults, setSearchResults] = useState([]);
+  const {
+    folders,
+    uploadedFiles,
+    addFolder,
+    addFileToFolder,
+    setUploadedFiles,
+  } = useContext(AppContext);
   const [isUploadMenuOpen, setUploadMenuOpen] = useState(false);
+  const [userKeyword, setUserKeyword] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
   const [isRenamePopupOpen, setRenamePopupOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [loading, setLoading] = useState(false);
-  const [complete, setComplete] = useState(false);
-  const [isCreateFolderPopupOpen, setCreateFolderPopupOpen] = useState(true);
+  const [isCreateFolderPopupOpen, setCreateFolderPopupOpen] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
-  const [isFileUploadPopupOpen, setFileUploadPopupOpen] = useState();
+  const [isFileUploadPopupOpen, setFileUploadPopupOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [customFileName, setCustomFileName] = useState("");
   const [selectedFolder, setSelectedFolder] = useState("");
+  const [uploadedFilesState, setUploadedFilesState] = useState({});
   const [errorInFolder, setErrorInFolder] = useState("");
   const [Folders, setFoldersList] = useState([]);
+  const [targetFolder, setTargetFolder] = useState("");
 
   useEffect(() => {
-    fetchData(); // fetchData 함수 호출
-  }, [Folders]);
+    const fetchData = async () => {
+      if (location.state) {
+        setTargetFolder(location.state.data);
+        await getContents(location.state.data);
+      }
+    };
 
-  const fetchData = async () => {
+    fetchData();
+  }, [location.state]);
+
+  const getContents = async (folderName) => {
     try {
-      const response = await fetch("http://52.78.157.198:5000/listUpFolders", {
-        method: "POST",
-      });
-      const data = await response.json(); // 서버에서 받은 데이터를 JSON으로 파싱
-
-      setFoldersList(data);
+      const response = await axios.get(
+        `http://52.78.157.198:5000/listUpFiles?folderName=${encodeURIComponent(
+          folderName
+        )}`
+      );
+      setFoldersList(response.data); // JSON 파싱 없이 데이터 할당
     } catch (error) {
-      console.error("Error fetching folder list:", error);
+      //setError("검색 중 오류가 발생했습니다.");
     }
   };
 
@@ -48,7 +64,6 @@ const HomeScreen = () => {
   const handleFileUploadButtonClick = async () => {
     try {
       setFileUploadPopupOpen(true);
-      setComplete(false);
       //handleUpload();
     } catch (error) {
       console.error("Error:", error);
@@ -83,17 +98,25 @@ const HomeScreen = () => {
       const data = await response.json();
       console.log(data.message); // 서버로부터 받은 응답 메시지 출력
       setLoading(false);
-      setComplete(true);
+      setFileUploadPopupOpen(false);
     } catch (error) {
       console.error("Error uploading file:", error);
     }
   };
 
+  const handleNavigateToKeywordResult = () => {
+    navigate(`/keyword-result?keyword=${userKeyword}`);
+  };
+
   const handleFolderIconClick = (folderName) => {
     setUploadMenuOpen(false);
-    navigate(`/files/${folderName}`, {
+    navigate(`/details/${folderName}`, {
       state: {
-        data: folderName,
+        data: {
+          index: [],
+          filename: folderName,
+        },
+        type: 4,
       },
     });
   };
@@ -101,30 +124,28 @@ const HomeScreen = () => {
   const handleCreateFolderButtonClick = () => {
     setCreateFolderPopupOpen(true);
   };
+
   const handleCreateFolder = async () => {
     try {
       if (newFolderName.trim() !== "") {
         const newFolder = { name: newFolderName, id: Date.now() };
         addFolder(newFolder);
-
-        const response = await axios.post(
-          "http://52.78.157.198:5000/create_folders",
-          { folderName: newFolderName },
-          { headers: { "Content-Type": "application/json" } }
-        );
-
-        if (response.data === "same name") {
-          setErrorInFolder("This Name already exist.");
-        } else {
-          fetchData();
-        }
-      } else {
-        setErrorInFolder("이름은 공백이 될 수 없습니다.");
       }
+      const response = await axios.post(
+        "http://52.78.157.198:5000/create_folders",
+        { folderName: newFolderName },
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      if (response.data === "same name") {
+        setErrorInFolder("This Name already exist.");
+      }
+
       //const data = await response.json();
     } catch (error) {
       console.error("Error uploading file:", error);
     }
+    setCreateFolderPopupOpen(false);
   };
 
   const handleItemClick = (item) => {
@@ -221,6 +242,7 @@ const HomeScreen = () => {
           <button className="create-folder-button" onClick={handleCreateFolder}>
             폴더 생성
           </button>
+
           {errorInFolder}
         </div>
       )}
@@ -237,8 +259,6 @@ const HomeScreen = () => {
             type="file"
             onChange={handleFileSelect}
           />
-
-          {/* 사용자 정의 파일명 입력을 위한 입력란 */}
           <input
             className="file-upload-custom-input"
             type="text"
@@ -263,8 +283,7 @@ const HomeScreen = () => {
           <button className="file-upload-button" onClick={handleUpload}>
             업로드
           </button>
-          {loading && <p>업로드 중입니다. 잠시만 기다려주세요.</p>}
-          {complete && <p>업로드 완료!</p>}
+          {loading && <p>업로드 중 ...</p>}
         </div>
       )}
 
@@ -287,4 +306,4 @@ const HomeScreen = () => {
   );
 };
 
-export default HomeScreen;
+export default FilesInFolder;

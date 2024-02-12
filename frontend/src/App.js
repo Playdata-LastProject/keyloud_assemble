@@ -9,6 +9,8 @@ import KeywordSearch from "./components/KeywordSearch.js";
 import KeywordResult from "./components/KeywordResult.js"; // 추가
 import FileDetails from "./components/FileDetails.js"; // 추가
 import ScriptDisplay from "./components/ScriptDisplay.js"; // 추가
+import FilesInFolder from "./components/filesInFolder.js"; // 추가
+
 import "./App.css";
 import { AppProvider } from "./AppContext";
 
@@ -32,7 +34,7 @@ const App = () => {
             <div className="main-content">
               <Routes>
                 <Route path="/" exact element={<HomeScreen />} />
-                <Route path="/keyword" element={<KeywordSearch />} />
+                <Route path="/keyword/:id" element={<KeywordSearch />} />
                 <Route path="/keyword-result" element={<KeywordResult />} />
                 <Route
                   path="/file-details/:fileName"
@@ -40,6 +42,7 @@ const App = () => {
                 />
                 <Route path="/trash" element={<TrashScreen />} />
                 <Route path="/details/:id" element={<ScriptDisplay />} />
+                <Route path="/files/:id" element={<FilesInFolder />} />
               </Routes>
             </div>
           </div>

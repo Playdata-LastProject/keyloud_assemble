@@ -1,4 +1,5 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 const multer = require("multer");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -10,16 +11,62 @@ const synonyms = require("./synonyms");
 const { searchInScript, searchInKeywords } = require("./searching");
 
 const app = express();
+app.use(bodyParser.json());
 
 // CORS 미들웨어 추가
-  app.use(cors());
+app.use(cors());
 
 // MongoDB 연결
 mongoose.connect("mongodb://52.78.157.198:27017/keyloud");
 const conn = mongoose.connection;
+
+app.post("/create_folders", async (req, res) => {
+  const collection = conn.db.collection("folders");
+  const folderName = req.body.folderName;
+  const sameName = await collection.findOne({ folderName: folderName });
+
+  if (!sameName) {
+    const folderDetails = {
+      folderName: folderName,
+    };
+    console.log("Folder Creation");
+    // MongoDB에 파일 정보 저장
+    await collection.insertOne(folderDetails);
+  } else {
+    res.send("same name");
+  }
+});
+
+app.post("/listUpFolders", async (req, res) => {
+  const collection = conn.db.collection("folders");
+
+  const projection = { folderName: 1 }; // folderName은 1로 설정하여 반환, _id는 0으로 설정하여 반환하지 않음
+
+  const folderNames = await collection.find({}, projection);
+  const folderNamesList = await folderNames.toArray();
+  const result = folderNamesList.map((item) => item.folderName);
+  console.log(result);
+  res.send(result);
+});
+
+app.get("/listUpFiles", async (req, res) => {
+  const collection = conn.db.collection("files");
+  const targetFolder = req.query.folderName;
+
+  const fileResults = await collection.find({
+    folderName: targetFolder,
+    filename: { $exists: true },
+  });
+  const fileResultsList = await fileResults.toArray();
+  const result = fileResultsList.map((item) => item.filename);
+
+  console.log(result);
+  res.send(result);
+});
+
 // 파일 업로드 라우트
 app.post("/upload_files", multer().single("files"), async (req, res) => {
-  const collection = conn.db.collection("test");
+  const collection = conn.db.collection("files");
   const customName = req.body.customFileName;
   const sameName = await collection.find({ filename: customName }).toArray();
   if (sameName.length > 0) {
@@ -45,6 +92,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
 
     // 파일이 업로드된 후의 처리
     const fileDetails = {
+      folderName: req.body.selectedFolder,
       filename: customName,
       content: req.file.buffer, // 바이너리 데이터로 저장
       scripts: text_result,
@@ -56,7 +104,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
     };
 
     // MongoDB에 파일 정보 저장
-    await conn.db.collection("test").insertOne(fileDetails);
+    await conn.db.collection("files").insertOne(fileDetails);
     res.json({ message: "File uploaded successfully" });
     console.log("File uploaded successfully");
 
@@ -70,7 +118,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
 // Update URL로 요청이 들어왔을 때의 처리
 app.post("/update_scripts", async (req, res) => {
   try {
-    const collection = conn.db.collection("test");
+    const collection = conn.db.collection("files");
 
     // 프론트엔드에서 보낸 새로운 summary 값
     const newScripts = req.body.newScripts;
@@ -96,7 +144,7 @@ app.post("/update_scripts", async (req, res) => {
 // Update URL로 요청이 들어왔을 때의 처리
 app.post("/update_summary", async (req, res) => {
   try {
-    const collection = conn.db.collection("test");
+    const collection = conn.db.collection("files");
 
     // 프론트엔드에서 보낸 새로운 summary 값
     const newSummary = req.body.newSummary;
@@ -147,7 +195,9 @@ app.delete("/delete_all_files", async (req, res) => {
       res.status(200).json({ message: "All trash files deleted successfully" });
     } else {
       console.log("No trash files found or no deletion needed");
-      res.status(404).json({ message: "No trash files found or no deletion needed" });
+      res
+        .status(404)
+        .json({ message: "No trash files found or no deletion needed" });
     }
   } catch (error) {
     console.error("Error during deleting all trash files:", error);
@@ -204,7 +254,7 @@ app.delete("/delete_files", async (req, res) => {
 
     // id로 조회하여 문서 삭제
     const result = await db
-      .collection("test")
+      .collection("files")
       .deleteOne({ filename: new ObjectID(documentName) });
 
     if (result.deletedCount === 1) {
@@ -224,12 +274,13 @@ app.delete("/delete_files", async (req, res) => {
 
 app.get("/keyword_search", async (req, res) => {
   try {
-    const collection = conn.db.collection("test");
+    const collection = conn.db.collection("files");
 
     const targetWord = req.query.keyword;
     const regex = new RegExp(targetWord, "i"); // 대소문자 구분 없이 검색
     // MongoDB 쿼리를 통해 파일 검색
     const projection = {
+      folderName: 0,
       filename: 1,
       content: 0,
       scripts: 1,
@@ -291,12 +342,13 @@ app.get("/keyword_search", async (req, res) => {
 
 app.get("/contents", async (req, res) => {
   try {
-    const collection = conn.db.collection("test");
+    const collection = conn.db.collection("files");
 
     const targetName = req.query.fileName;
     // MongoDB 쿼리를 통해 파일 검색
     console.log(targetName);
     const projection = {
+      folderName: 0,
       filename: 0,
       content: 1,
       scripts: 1,
@@ -319,6 +371,6 @@ app.get("/contents", async (req, res) => {
   }
 });
 
-app.listen(5000, '0.0.0.0', () => {
+app.listen(5000, "0.0.0.0", () => {
   console.log("Server started...");
 });

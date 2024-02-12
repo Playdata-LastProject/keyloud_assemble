@@ -13,10 +13,17 @@ const ScriptDisplay = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (location.state) {
-        setReceivedData(location.state.data);
-        setType(location.state.type);
-        setLoading(false);
-        await getContents(location.state.data.filename);
+        if (location.state.type < 4) {
+          setReceivedData(location.state.data);
+          setType(location.state.type);
+          setLoading(false);
+          await getContents(location.state.data.filename);
+        } else {
+          setReceivedData(location.state.data);
+          setType(location.state.type);
+          setLoading(false);
+          await getContents(location.state.data.filename);
+        }
       }
     };
 
@@ -116,6 +123,14 @@ const ScriptDisplay = () => {
       <h2>Received Data</h2>
       <p>file name: {receivedData.filename}</p>
       <p>script: {Content.scripts}</p>
+      <div className="file-actions">
+        <button onClick={handleEdit} className="edit-button">
+          수정
+        </button>
+        <button onClick={handleDelete} className="delete-button">
+          삭제
+        </button>
+      </div>
       {type === 0 && (
         <ul>
           {receivedData.index.map((index) => (
@@ -137,14 +152,6 @@ const ScriptDisplay = () => {
           ))}
         </ul>
       )}
-      <div className="file-actions">
-            <button onClick={handleEdit} className="edit-button">
-              수정
-            </button>
-            <button onClick={handleDelete} className="delete-button">
-              삭제
-            </button>
-        </div>
     </div>
   );
 };
