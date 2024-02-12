@@ -140,7 +140,7 @@ const ScriptDisplay = () => {
           수정
         </button>
         <button
-          onClick={() => handleDelete(Content.filename)}
+          onClick={() => handleDelete(Content.targetName)}
           className="delete-button"
         >
           삭제
