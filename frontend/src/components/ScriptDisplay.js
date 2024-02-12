@@ -26,6 +26,7 @@ const ScriptDisplay = () => {
           setType(location.state.type);
           setLoading(false);
           await getContents(location.state.data.filename);
+          await fetchAudioData(location.state.data.filename);
         }
       }
     };
@@ -33,29 +34,25 @@ const ScriptDisplay = () => {
     fetchData();
   }, [location.state]);
 
-  useEffect(() => {
-    const fetchAudioData = async () => {
-      try {
-        if (receivedData.filename) {
-          const response = await axios.get(
-            `http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
-              receivedData.filename
-            )}`,
-            {
-              responseType: "blob", // 이진 데이터로 응답 받음
-            }
-          );
-          setAudioData(response.data);
-          setLoading(false);
-        }
-      } catch (error) {
-        setError(error);
+  const fetchAudioData = async () => {
+    try {
+      if (location.state.data.filename) {
+        const response = await axios.get(
+          `http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
+            location.state.data.filename
+          )}`,
+          {
+            responseType: "blob", // 이진 데이터로 응답 받음
+          }
+        );
+        setAudioData(response.data);
         setLoading(false);
       }
-    };
-
-    fetchAudioData();
-  }, [receivedData]);
+    } catch (error) {
+      setError(error);
+      setLoading(false);
+    }
+  };
 
   const getContents = async (fileID) => {
     setLoading(true);
