@@ -35,12 +35,12 @@ const ScriptDisplay = () => {
     fetchData();
   }, [location.state]);
 
-  const fetchAudioData = async () => {
+  const fetchAudioData = async (filename) => {
     try {
-      if (location.state.data.filename) {
+      if (filename) {
         const response = await fetch(
           `http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
-            location.state.data.filename
+            filename
           )}`
         );
         /*{
