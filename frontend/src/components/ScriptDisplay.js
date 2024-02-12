@@ -131,16 +131,10 @@ const ScriptDisplay = () => {
       />
       <p>script: {Content.scripts}</p>
       <div className="file-actions">
-        <button
-          onClick={() => handleEdit(Content.scripts)}
-          className="edit-button"
-        >
+        <button onClick={() => handleEdit(Content.scripts)} className="edit-button">
           수정
         </button>
-        <button
-          onClick={() => handleDelete(Content.filename)}
-          className="delete-button"
-        >
+        <button onClick={() => handleDelete(Content.filename)} className="delete-button">
           삭제
         </button>
       </div>
