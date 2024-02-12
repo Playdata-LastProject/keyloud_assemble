@@ -64,7 +64,7 @@ function TrashScreen() {
       <h1>휴지통</h1>
       <ul>
         {items.map(item => (
-          <li key={item.filename}>{item.filename}</li>
+          <li key={item}>{item}</li>
         ))}
       </ul>
       {items.length > 0 && (
