@@ -26,6 +26,8 @@ jobs:
           script: |
             cd keyloud_assemble
             git pull origin main
+            git checkout aws
+            git merge aws main
 
             cd frontend
             npm run build
