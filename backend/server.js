@@ -9,6 +9,7 @@ const keywords = require("./keywords");
 const summary = require("./summary");
 const synonyms = require("./synonyms");
 const { searchInScript, searchInKeywords } = require("./searching");
+const mime = require("mime");
 
 const app = express();
 app.use(bodyParser.json());
@@ -95,6 +96,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       folderName: req.body.selectedFolder,
       filename: customName,
       content: req.file.buffer, // 바이너리 데이터로 저장
+      mimeType: mime.lookup(req.file.originalname),
       scripts: text_result,
       summary: summary_result,
       keywords: keywords_result,
@@ -367,7 +369,6 @@ app.get("/contents", async (req, res) => {
       projection
     );
 
-    console.log(content.targetName);
     res.json(content);
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
@@ -380,15 +381,17 @@ app.get("/get_audio", async (req, res) => {
 
   try {
     // 데이터베이스에서 해당 파일의 바이너리 데이터 가져오기
-    const Audio = await conn.db
-      .collection("files")
-      .findOne({ filename: filename });
+    const collection = conn.db.collection("files");
 
+    const results = await collection.findOne({
+      filename: filename,
+      content: { $exists: true },
+      mimeType: { $exists: true },
+    });
     // 파일의 MIME 타입에 따라 Content-Type 설정
-    res.setHeader("Content-Type", "audio/mpeg"); // 예시로 'audio/mpeg'을 사용하였습니다. 실제 MIME 타입에 맞게 설정해야 합니다.
-
-    // 바이너리 데이터를 응답으로 보냄
-    res.send(Audio.content);
+    const MIME = results.mimeType;
+    res.setHeader(MIME); // 예시로 'audio/
+    res.send(results.content);
   } catch (error) {
     console.error("Error retrieving file:", error);
     res.status(500).json({ message: "Internal Server Error" });
