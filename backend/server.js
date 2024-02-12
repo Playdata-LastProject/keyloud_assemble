@@ -95,6 +95,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       folderName: req.body.selectedFolder,
       filename: customName,
       content: req.file.buffer, // 바이너리 데이터로 저장
+      mimeType: mime.lookup(req.file.originalname),
       scripts: text_result,
       summary: summary_result,
       keywords: keywords_result,
@@ -383,9 +384,11 @@ app.get("/get_audio", async (req, res) => {
     const results = await collection.findOne({
       filename: filename,
       content: { $exists: true },
+      mimeType: { $exists: true },
     });
     // 파일의 MIME 타입에 따라 Content-Type 설정
-    res.setHeader("Content-Type", "audio/mpeg"); // 예시로 'audio/
+    const MIME = results.mimeType;
+    res.setHeader(MIME); // 예시로 'audio/
     res.send(results.content);
   } catch (error) {
     console.error("Error retrieving file:", error);
