@@ -8,7 +8,7 @@ function TrashScreen() {
   useEffect(() => {
     const fetchTrashData = async () => {
       try {
-        const response = await fetch('http://localhost:5000/trash_files'); // 백엔드 API 엔드포인트로 수정
+        const response = await fetch('http://52.78.157.198:5000/trash_files'); // 백엔드 API 엔드포인트로 수정
         if (!response.ok) {
           throw new Error('휴지통 데이터를 가져오지 못했습니다.');
         }
@@ -27,7 +27,7 @@ function TrashScreen() {
     if (isConfirmed) {
       setItems([]); // 화면에서만 휴지통 비우기
 
-      const deleteEndpoint = 'http://localhost:5000/delete_all_files'; // 수정된 엔드포인트
+      const deleteEndpoint = 'http://52.78.157.198:5000/delete_all_files'; // 수정된 엔드포인트
 
       // 삭제 요청을 보낼 때에는 선택된 파일 ID를 전달하는 부분을 모두 제거합니다.
       fetch(deleteEndpoint, {

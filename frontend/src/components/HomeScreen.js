@@ -29,7 +29,7 @@ const HomeScreen = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/listUpFolders", {
+      const response = await fetch("http://52.78.157.198:5000/listUpFolders", {
         method: "POST",
       });
       const data = await response.json(); // 서버에서 받은 데이터를 JSON으로 파싱
@@ -75,7 +75,7 @@ const HomeScreen = () => {
       formData.append("customFileName", customFileName);
       formData.append("selectedFolder", selectedFolder);
 
-      const response = await fetch("http://localhost:5000/upload_files", {
+      const response = await fetch("http://52.78.157.198:5000/upload_files", {
         method: "POST",
         body: formData,
       });
@@ -108,7 +108,7 @@ const HomeScreen = () => {
         addFolder(newFolder);
 
         const response = await axios.post(
-          "http://localhost:5000/create_folders",
+          "http://52.78.157.198:5000/create_folders",
           { folderName: newFolderName },
           { headers: { "Content-Type": "application/json" } }
         );

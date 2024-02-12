@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // MongoDB 연결
-mongoose.connect("mongodb://localhost:27017/keyloud");
+mongoose.connect("mongodb://52.78.157.198:27017/keyloud");
 const conn = mongoose.connection;
 
 app.post("/create_folders", async (req, res) => {
