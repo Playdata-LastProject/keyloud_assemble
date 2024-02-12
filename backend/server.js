@@ -9,7 +9,6 @@ const keywords = require("./keywords");
 const summary = require("./summary");
 const synonyms = require("./synonyms");
 const { searchInScript, searchInKeywords } = require("./searching");
-import AudioPlayer from "react-audio-player";
 
 const app = express();
 app.use(bodyParser.json());

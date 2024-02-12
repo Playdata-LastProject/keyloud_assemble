@@ -25,6 +25,7 @@
     "gridfs-stream": "^1.1.1",
     "mongoose": "^8.0.4",
     "multer": "^1.4.5-lts.1",
-    "node-wav": "^0.0.2"
+    "node-wav": "^0.0.2",
+    "react-audio-player": "^0.17.0"
   }
 }
