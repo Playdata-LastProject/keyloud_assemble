@@ -99,7 +99,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
     const fileDetails = {
       folderName: req.body.selectedFolder,
       filename: customName,
-      content: fs.readFileSync(copy_path),//req.file.buffer, // 바이너리 데이터로 저장
+      content: fs.readFileSync(copy_path), //req.file.buffer, // 바이너리 데이터로 저장
       mimeType: mimeType,
       scripts: text_result,
       summary: summary_result,
