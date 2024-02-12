@@ -13,7 +13,7 @@ function TrashScreen() {
           throw new Error('휴지통 데이터를 가져오지 못했습니다.');
         }
         const data = await response.data;
-        setItems(data); // 백엔드에서 받은 데이터로 상태 업데이트
+        setItems(data.filename); // 백엔드에서 받은 데이터로 상태 업데이트
       } catch (error) {
         console.error('휴지통 데이터를 가져오는 중 오류 발생', error);
       }
