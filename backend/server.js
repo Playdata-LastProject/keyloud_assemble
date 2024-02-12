@@ -390,7 +390,7 @@ app.get("/get_audio", async (req, res) => {
     });
     // 파일의 MIME 타입에 따라 Content-Type 설정
     const MIME = results.mimeType;
-    res.setHeader(MIME); // 예시로 'audio/
+    res.setHeader("Content-Type", MIME); // 예시로 'audio/
     res.send(results.content);
   } catch (error) {
     console.error("Error retrieving file:", error);
