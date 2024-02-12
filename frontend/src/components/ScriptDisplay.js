@@ -50,7 +50,7 @@ const ScriptDisplay = () => {
         const data = await response.arrayBuffer();
 
         const textDecoder = new TextDecoder();
-        const audioDataString = textDecoder.decode(arrayBuffer);
+        const audioDataString = textDecoder.decode(data);
 
         setBufferString(audioDataString);
         const blob = new Blob([data]);
