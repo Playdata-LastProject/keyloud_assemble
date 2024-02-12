@@ -12,6 +12,7 @@ const ScriptDisplay = () => {
   const [error, setError] = useState(null);
   const [splitedScript, spliting] = useState([]);
   const [audioData, setAudioData] = useState("");
+  const [bufferString, setBufferString] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,6 +48,11 @@ const ScriptDisplay = () => {
             responseType: "blob", // 이진 데이터로 응답 받음
           }*/
         const data = await response.arrayBuffer();
+
+        const textDecoder = new TextDecoder();
+        const audioDataString = textDecoder.decode(arrayBuffer);
+
+        setBufferString(audioDataString);
         const blob = new Blob([data]);
         setAudioData(blob);
         setLoading(false);
@@ -147,6 +153,7 @@ const ScriptDisplay = () => {
       <h2>Received Data</h2>
       <p>file name: {receivedData.filename}</p>
       <p>MIME TYPE: {Content.mimeType}</p>
+      <p>content: {bufferString}</p>
       {!audioData ? (
         // 오디오 데이터가 존재하지 않는 경우의 처리
         <div>No audio data available</div>
