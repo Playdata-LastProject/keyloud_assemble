@@ -395,12 +395,15 @@ app.get("/get_audio", async (req, res) => {
     const results = await collection.findOne({
       filename: filename,
       content: { $exists: true },
-      //mimeType: { $exists: true },
+      mimeType: { $exists: true },
     });
     // 파일의 MIME 타입에 따라 Content-Type 설정
-    //const MIME = results.mimeType;
-    //res.setHeader("Content-Type", MIME); // 예시로 'audio/*/
-    res.send(results.content);
+    const MIME = results.mimeType;
+    res.setHeader("Content-Type", MIME); // 예시로 'audio/*/
+
+    const Buffer = require("buffer").Buffer;
+    const buffer = Buffer.from(results.content);
+    res.send(buffer);
   } catch (error) {
     console.error("Error retrieving file:", error);
     res.status(500).json({ message: "Internal Server Error" });

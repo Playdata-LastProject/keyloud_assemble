@@ -11,7 +11,7 @@ const ScriptDisplay = () => {
   const [Content, setContents] = useState({});
   const [error, setError] = useState(null);
   const [splitedScript, spliting] = useState([]);
-  const [audioData, setAudioData] = useState(new Audio());
+  const [audioData, setAudioData] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,17 +38,26 @@ const ScriptDisplay = () => {
   const fetchAudioData = async () => {
     try {
       if (location.state.data.filename) {
-        const response = await axios.get(
+        fetch(
+          `http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
+            location.state.data.filename
+          )}`
+        )
+          .then((response) => response.blob())
+          .then((blob) => {
+            const url = URL.createObjectURL(blob);
+            setAudioData(url);
+          });
+
+        /*const response = await axios.get(
           `http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
             location.state.data.filename
           )}`,
           {
             responseType: "blob", // 이진 데이터로 응답 받음
           }
-        );
-        const audioBlob = new Blob([response.data], { type: Content.mimeType });
-        const url = URL.createObjectURL(audioBlob);
-        setAudioData(new Audio(url));
+        );*/
+        setAudioData(response.data);
         setLoading(false);
       }
     } catch (error) {
@@ -147,14 +156,15 @@ const ScriptDisplay = () => {
       <h2>Received Data</h2>
       <p>file name: {receivedData.filename}</p>
       <p>MIME TYPE: {Content.mimeType}</p>
+      <p>audio: {audioData}</p>
       {!audioData ? (
         // 오디오 데이터가 존재하지 않는 경우의 처리
         <div>No audio data available</div>
       ) : (
         // 오디오 데이터가 존재하는 경우
         <AudioPlayer
-          autoPlay={true}
-          controls={true}
+          autoPlay
+          controls
           src={audioData}
           type={Content.mimeType}
           onPlay={() => console.log("Audio is playing")}
