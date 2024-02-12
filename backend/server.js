@@ -78,9 +78,11 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    fs.writeFileSync(`./uploads/${req.file.originalname}`, req.file.buffer);
+    const originalName = req.file.originalname;
 
-    const copy_path = "./uploads/" + req.file.originalname;
+    fs.writeFileSync(`./uploads/${originalName}`, req.file.buffer);
+
+    const copy_path = "./uploads/" + originalName;
 
     const s2t_result = await speech2text(copy_path);
 
@@ -96,7 +98,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       folderName: req.body.selectedFolder,
       filename: customName,
       content: req.file.buffer, // 바이너리 데이터로 저장
-      mimeType: mime.lookup(req.file.originalname),
+      mimeType: originalName.split(".").pop(),
       scripts: text_result,
       summary: summary_result,
       keywords: keywords_result,
@@ -110,7 +112,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
     res.json({ message: "File uploaded successfully" });
     console.log("File uploaded successfully");
 
-    fs.unlinkSync(`./uploads/${req.file.originalname}`);
+    fs.unlinkSync(`./uploads/${originalName}`);
   } catch (error) {
     console.error("Error during file upload:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -357,7 +359,7 @@ app.get("/contents", async (req, res) => {
       folderName: 0,
       filename: 0,
       content: 1,
-      mimeType:1,
+      mimeType: 1,
       scripts: 1,
       summary: 1,
       keywords: 0,
