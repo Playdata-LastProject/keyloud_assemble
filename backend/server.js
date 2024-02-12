@@ -233,7 +233,7 @@ app.delete("/move_to_trash", async (req, res) => {
           .collection("files")
           .deleteOne({ filename: documentName });
 
-        if (deleteResult.insertedCount > 0) {
+        if (deleteResult.deletedCount > 0) {
           res.status(200).json({
             message: "문서가 성공적으로 삭제되고 휴지통으로 이동되었습니다.",
           });
