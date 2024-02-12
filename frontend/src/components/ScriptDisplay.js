@@ -47,9 +47,11 @@ const ScriptDisplay = () => {
             responseType: "blob", // 이진 데이터로 응답 받음
           }*/
         const data = await response.arrayBuffer();
-        const blob = new Blob([data]);
-        url = URL.createObjectURL(blob);
-        setAudioData(url);
+        const audioData = new Uint8Array(arrayBuffer);
+
+        //const blob = new Blob([data]);
+        //url = URL.createObjectURL(blob);
+        setAudioData(audioData);
         setLoading(false);
       }
     } catch (error) {
@@ -154,7 +156,12 @@ const ScriptDisplay = () => {
       ) : (
         // 오디오 데이터가 존재하는 경우
         <audio controls>
-          <source src={audioData} type={Content.mimeType} />
+          <source
+            src={`data:${Content.mimeType};base64,${btoa(
+              String.fromCharCode(...audioData)
+            )}`}
+            type={Content.mimeType}
+          />
           Your browser does not support the audio element.
         </audio>
       )}
