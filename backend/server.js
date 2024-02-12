@@ -263,7 +263,7 @@ app.delete("/delete_files", async (req, res) => {
     const documentName = req.body.documentName;
 
     // id로 조회하여 문서 삭제
-    const result = await db
+    const result = await conn.db
       .collection("files")
       .deleteOne({ filename: new ObjectID(documentName) });
 
