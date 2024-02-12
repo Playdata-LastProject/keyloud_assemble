@@ -11,7 +11,7 @@ const ScriptDisplay = () => {
   const [Content, setContents] = useState({});
   const [error, setError] = useState(null);
   const [splitedScript, spliting] = useState([]);
-  const [audioData, setAudioData] = useState("");
+  const [audioData, setAudioData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,10 +48,12 @@ const ScriptDisplay = () => {
           }*/
         const data = await response.arrayBuffer();
         const audioData = new Uint8Array(arrayBuffer);
+        const audioDataString = String.fromCharCode(...audioData);
+        const encodedAudioData = btoa(audioDataString);
 
         //const blob = new Blob([data]);
         //url = URL.createObjectURL(blob);
-        setAudioData(audioData);
+        setAudioData(encodedAudioData);
         setLoading(false);
       }
     } catch (error) {
@@ -157,9 +159,7 @@ const ScriptDisplay = () => {
         // 오디오 데이터가 존재하는 경우
         <audio controls>
           <source
-            src={`data:${Content.mimeType};base64,${btoa(
-              String.fromCharCode(...audioData)
-            )}`}
+            src={`data:${Content.mimeType};base64,${audioData}`}
             type={Content.mimeType}
           />
           Your browser does not support the audio element.
