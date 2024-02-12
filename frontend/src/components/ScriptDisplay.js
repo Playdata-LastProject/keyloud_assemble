@@ -87,16 +87,18 @@ const ScriptDisplay = () => {
 
   // 파일 삭제 이벤트 핸들러
   const handleDelete = (fileName) => {
-    // TODO: 파일 삭제 로직 추가
-    console.log(`Delete file: ${fileName}`);
+    const isConfirmed = window.confirm('파일을 휴지통으로 옮기시겠습니까?');
+    if(isConfirmed){
+        // TODO: 파일 삭제 로직 추가
+      console.log(`Delete file: ${fileName}`);
 
-    const deleteEndpoint = 'http://52.78.157.198:5000/move_to_trash';
+      const deleteEndpoint = 'http://52.78.157.198:5000/move_to_trash';
 
-    // Sample request using fetch
-    axios.delete(deleteEndpoint, 
-      {headers: {'Content-Type': 'application/json'}},
-      {fileName: fileName } // Send the file name or other necessary data
-    )
+      // Sample request using fetch
+      axios.delete(deleteEndpoint, 
+        {headers: {'Content-Type': 'application/json'}},
+        {fileName: fileName } // Send the file name or other necessary data
+      )
       .then(response => {
         // Handle success response if needed
         console.log('File deletion success', response.data);
@@ -105,6 +107,8 @@ const ScriptDisplay = () => {
         // Handle error if needed
         console.error('File deletion failed', error);
       });
+    }
+    
   };
 
   // 데이터가 존재하는 경우에 대한 처리

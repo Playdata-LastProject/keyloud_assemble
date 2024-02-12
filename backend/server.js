@@ -45,7 +45,7 @@ app.post("/listUpFolders", async (req, res) => {
   const folderNames = await collection.find({}, projection);
   const folderNamesList = await folderNames.toArray();
   const result = folderNamesList.map((item) => item.folderName);
-  console.log(result);
+  //console.log(result);
   res.send(result);
 });
 
