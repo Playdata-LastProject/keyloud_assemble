@@ -210,19 +210,19 @@ app.delete("/move_to_trash", async (req, res) => {
     const documentName = req.body.fileName;
 
     // 파일을 'files' 컬렉션에서 조회하여 데이터를 얻어옴
-    const fileData = await db
+    const fileData = await conn.db
       .collection("files")
       .findOne({ filename: documentName });
 
     if (fileData) {
       // 파일을 'trash' 컬렉션으로 이동
-      const moveToTrashResult = await db
+      const moveToTrashResult = await conn.db
         .collection("trash")
         .insertOne(fileData);
 
       if (moveToTrashResult.insertedCount === 1) {
         // 파일을 'files' 컬렉션에서 삭제
-        const deleteResult = await db
+        const deleteResult = await conn.db
           .collection("files")
           .deleteOne({ filename: documentName });
 
