@@ -83,7 +83,7 @@ const HomeScreen = () => {
       formData.append("customFileName", customFileName);
       formData.append("selectedFolder", selectedFolder);
 
-      const response = await fetch("http://localhost:5000/upload_files", {
+      const response = await fetch("http://52.78.157.198:5000/upload_files", {
         method: "POST",
         body: formData,
       });
