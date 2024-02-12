@@ -9,6 +9,7 @@ const ScriptDisplay = () => {
   const [receivedData, setReceivedData] = useState({});
   const [Content, setContents] = useState({});
   const [error, setError] = useState(null);
+  const [splitedScript, spliting] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,13 +37,14 @@ const ScriptDisplay = () => {
 
     try {
       const response = await axios.get(
-        `http://52.78.157.198:5000/contents?fileName=${encodeURIComponent(fileID)}`
+        `http://localhost:5000/contents?fileName=${encodeURIComponent(fileID)}`
       );
       setContents((prevContent) => ({ ...prevContent, ...response.data })); // JSON 파싱 없이 데이터 할당
+      const splitScripts = response.data.scripts.split(" ");
+      spliting(splitScripts);
     } catch (error) {
       setError("검색 중 오류가 발생했습니다.");
     }
-
     setLoading(false);
   };
 
@@ -58,30 +60,30 @@ const ScriptDisplay = () => {
     // TODO: 파일 수정 로직 추가
     console.log(`Edit file: ${fileName}`);
 
-    const editEndpoint = 'http://52.78.157.198:5000/update_scripts';
+    const editEndpoint = "http://52.78.157.198:5000/update_scripts";
 
     // Sample request using fetch
     fetch(editEndpoint, {
-      method: 'PUT', // Use 'PUT' method for editing
+      method: "PUT", // Use 'PUT' method for editing
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         // Add any other headers if needed
       },
       body: JSON.stringify({ fileName }), // Send the file name or other necessary data
     })
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
-          throw new Error('Editing file failed');
+          throw new Error("Editing file failed");
         }
         return response.json();
       })
-      .then(data => {
+      .then((data) => {
         // Handle success response if needed
-        console.log('File edit success', data);
+        console.log("File edit success", data);
       })
-      .catch(error => {
+      .catch((error) => {
         // Handle error if needed
-        console.error('File edit failed', error);
+        console.error("File edit failed", error);
       });
   };
 
@@ -90,30 +92,30 @@ const ScriptDisplay = () => {
     // TODO: 파일 삭제 로직 추가
     console.log(`Delete file: ${fileName}`);
 
-    const deleteEndpoint = 'http://52.78.157.198:5000/move_to_trash';
+    const deleteEndpoint = "http://52.78.157.198:5000/move_to_trash";
 
     // Sample request using fetch
     fetch(deleteEndpoint, {
-      method: 'DELETE', // Use 'DELETE' method for deletion
+      method: "DELETE", // Use 'DELETE' method for deletion
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         // Add any other headers if needed
       },
       body: JSON.stringify({ fileName }), // Send the file name or other necessary data
     })
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
-          throw new Error('Deleting file failed');
+          throw new Error("Deleting file failed");
         }
         return response.json();
       })
-      .then(data => {
+      .then((data) => {
         // Handle success response if needed
-        console.log('File deletion success', data);
+        console.log("File deletion success", data);
       })
-      .catch(error => {
+      .catch((error) => {
         // Handle error if needed
-        console.error('File deletion failed', error);
+        console.error("File deletion failed", error);
       });
   };
 
@@ -122,6 +124,13 @@ const ScriptDisplay = () => {
     <div>
       <h2>Received Data</h2>
       <p>file name: {receivedData.filename}</p>
+      <AudioPlayer
+        autoPlay
+        controls
+        src={`http://52.78.157.198:5000/get_file/${receivedData.filename}`}
+        onPlay={() => console.log("Audio is playing")}
+        // 필요한 경우 추가적인 속성들을 설정할 수 있습니다.
+      />
       <p>script: {Content.scripts}</p>
       <div className="file-actions">
         <button onClick={handleEdit} className="edit-button">
@@ -132,11 +141,28 @@ const ScriptDisplay = () => {
         </button>
       </div>
       {type === 0 && (
-        <ul>
-          {receivedData.index.map((index) => (
-            <li key={index}>{Content.timestamp[index]}</li>
+        <div>
+          {splitedScript.map((index) => (
+            <div>
+              {index}
+              <p
+                style={{
+                  backgroundColor: receivedData.index.includes(index)
+                    ? "lavender"
+                    : "transparent",
+                }}
+              >
+                {splitedScript[index]}
+              </p>
+            </div>
           ))}
-        </ul>
+
+          <ul>
+            {receivedData.index.map((index) => (
+              <li key={index}>{Content.timestamp[index]}</li>
+            ))}
+          </ul>
+        </div>
       )}
       {type === 1 && (
         <ul>
