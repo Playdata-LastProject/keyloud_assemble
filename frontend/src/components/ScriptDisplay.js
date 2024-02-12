@@ -102,10 +102,10 @@ const ScriptDisplay = () => {
       // Sample request using fetch
       axios
         .delete(
-          deleteEndpoint,
-          { fileName: filename },
-          { headers: { "Content-Type": "application/json" } }
-        )
+          deleteEndpoint,{
+          data: { fileName: filename }, // data 속성으로 데이터 전달
+          headers: { "Content-Type": "application/json" },
+          })
         .then((response) => {
           // Handle success response if needed
           console.log("File deletion success", response.data);
