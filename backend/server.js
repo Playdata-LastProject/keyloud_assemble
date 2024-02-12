@@ -186,6 +186,7 @@ app.get("/trash_files", async (req, res) => {
 
     // 가져온 데이터를 클라이언트에 응답
     res.json(filenames);
+    console.log("응답한 이름:", filenames);
 
     console.log("Trash files retrieved successfully");
   } catch (error) {
@@ -217,6 +218,7 @@ app.delete("/delete_all_files", async (req, res) => {
 app.delete("/move_to_trash", async (req, res) => {
   try {
     const documentName = req.body.fileName;
+    console.log("삭제할 파일:", documentName);
 
     // 파일을 'files' 컬렉션에서 조회하여 데이터를 얻어옴
     const fileData = await conn.db
@@ -393,15 +395,12 @@ app.get("/get_audio", async (req, res) => {
     const results = await collection.findOne({
       filename: filename,
       content: { $exists: true },
-      mimeType: { $exists: true },
+      //mimeType: { $exists: true },
     });
     // 파일의 MIME 타입에 따라 Content-Type 설정
-    const MIME = results.mimeType;
-    res.setHeader("Content-Type", MIME); // 예시로 'audio/*/
-
-    const Buffer = require("buffer").Buffer;
-    const buffer = Buffer.from(results.content);
-    res.send(buffer);
+    //const MIME = results.mimeType;
+    //res.setHeader("Content-Type", MIME); // 예시로 'audio/*/
+    res.send(results.content);
   } catch (error) {
     console.error("Error retrieving file:", error);
     res.status(500).json({ message: "Internal Server Error" });
