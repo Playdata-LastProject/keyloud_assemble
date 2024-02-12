@@ -96,7 +96,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       folderName: req.body.selectedFolder,
       filename: customName,
       content: req.file.buffer, // 바이너리 데이터로 저장
-      mimeType: mime.lookup(req.file.buffer),
+      mimeType: mime.lookup(req.file.originalname),
       scripts: text_result,
       summary: summary_result,
       keywords: keywords_result,
@@ -178,11 +178,11 @@ app.get("/trash_files", async (req, res) => {
     const trashData = await collection.find({}).toArray();
 
     // 가져온 데이터에서 filename 필드의 값만 추출하여 배열로 만듦
-    const filenames = trashData.map(item => item.filename);
+    const filenames = trashData.map((item) => item.filename);
 
     // 가져온 데이터를 클라이언트에 응답
     res.json(filenames);
-    console.log("응답한 이름:",filenames);
+    console.log("응답한 이름:", filenames);
 
     console.log("Trash files retrieved successfully");
   } catch (error) {
