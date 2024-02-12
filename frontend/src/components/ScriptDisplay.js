@@ -154,7 +154,7 @@ const ScriptDisplay = () => {
         <audio controls>
           <source
             src={URL.createObjectURL(new Blob([audioData]))}
-            type="audio/wav"
+            type={Content.mimeType}
           />
           Your browser does not support the audio element.
         </audio>
