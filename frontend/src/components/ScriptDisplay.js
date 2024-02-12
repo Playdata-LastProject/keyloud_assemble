@@ -86,7 +86,6 @@ const ScriptDisplay = () => {
 
   const handleEdit = (fileName) => {
     // TODO: 파일 수정 로직 추가
-    console.log(`Edit file: ${fileName}`);
 
     const editEndpoint = "http://52.78.157.198:5000/update_scripts";
 
@@ -120,7 +119,6 @@ const ScriptDisplay = () => {
     const isConfirmed = window.confirm("파일을 휴지통으로 옮기시겠습니까?");
     if (isConfirmed) {
       // TODO: 파일 삭제 로직 추가
-      console.log(`Delete file: ${filename}`);
 
       const deleteEndpoint = "http://52.78.157.198:5000/move_to_trash";
 
