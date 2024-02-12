@@ -21,6 +21,7 @@ const ScriptDisplay = () => {
           setType(location.state.type);
           setLoading(false);
           await getContents(location.state.data.filename);
+          await fetchAudioData(location.state.data.filename);
         } else {
           setReceivedData(location.state.data);
           setType(location.state.type);
@@ -151,8 +152,8 @@ const ScriptDisplay = () => {
       ) : (
         // 오디오 데이터가 존재하는 경우
         <AudioPlayer
-          autoPlay
-          controls
+          autoPlay={true}
+          controls={true}
           src={URL.createObjectURL(audioData)}
           type={Content.mimeType}
           onPlay={() => console.log("Audio is playing")}
