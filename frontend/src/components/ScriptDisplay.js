@@ -91,11 +91,11 @@ const ScriptDisplay = () => {
   };
 
   // 파일 삭제 이벤트 핸들러
-  const handleDelete = (fileName) => {
+  const handleDelete = (filename) => {
     const isConfirmed = window.confirm("파일을 휴지통으로 옮기시겠습니까?");
     if (isConfirmed) {
       // TODO: 파일 삭제 로직 추가
-      console.log(`Delete file: ${Content.filename}`);
+      console.log(`Delete file: ${filename}`);
 
       const deleteEndpoint = "http://52.78.157.198:5000/move_to_trash";
 
@@ -104,7 +104,7 @@ const ScriptDisplay = () => {
         .delete(
           deleteEndpoint,
           { headers: { "Content-Type": "application/json" } },
-          { fileName: fileName } // Send the file name or other necessary data
+          { fileName: filename } // Send the file name or other necessary data
         )
         .then((response) => {
           // Handle success response if needed
@@ -140,7 +140,7 @@ const ScriptDisplay = () => {
           수정
         </button>
         <button
-          onClick={() => handleDelete(Content.targetName)}
+          onClick={() => handleDelete(Content.filename)}
           className="delete-button"
         >
           삭제
