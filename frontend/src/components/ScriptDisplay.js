@@ -47,7 +47,7 @@ const ScriptDisplay = () => {
             responseType: "blob", // 이진 데이터로 응답 받음
           }*/
         const data = await response.arrayBuffer();
-        const audioData = new Uint8Array(data).join("");
+        const audioData = new Uint8Array(data);
         const audioDataString = String.fromCharCode(...audioData);
         const encodedAudioData = btoa(audioDataString);
 
@@ -57,7 +57,6 @@ const ScriptDisplay = () => {
         setLoading(false);
       }
     } catch (error) {
-      setError(error);
       setLoading(false);
     }
   };
