@@ -17,10 +17,9 @@ function TrashScreen() {
         console.log("받은 데이터:",data);
         
         // data가 배열인지 확인 후 filename만 추출하여 상태 업데이트
-      if (Array.isArray(data)) {
-        const filenames = data[0].map(item => item.filename);
-        setItems(filenames);
-      } else {
+        if (Array.isArray(data)) {
+          setItems(data);
+        } else {
         console.error('올바르지 않은 데이터 형식입니다.');
         }
       } catch (error) {
