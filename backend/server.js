@@ -209,6 +209,7 @@ app.delete("/delete_all_files", async (req, res) => {
 app.delete("/move_to_trash", async (req, res) => {
   try {
     const documentName = req.body.fileName;
+    console.log("삭제할 파일:",documentName);
 
     // 파일을 'files' 컬렉션에서 조회하여 데이터를 얻어옴
     const fileData = await conn.db

@@ -95,7 +95,7 @@ const ScriptDisplay = () => {
     const isConfirmed = window.confirm("파일을 휴지통으로 옮기시겠습니까?");
     if (isConfirmed) {
       // TODO: 파일 삭제 로직 추가
-      console.log(`Delete file: ${fileName}`);
+      console.log(`Delete file: ${Content.filename}`);
 
       const deleteEndpoint = "http://52.78.157.198:5000/move_to_trash";
 
@@ -140,7 +140,7 @@ const ScriptDisplay = () => {
           수정
         </button>
         <button
-          onClick={() => handleDelete(Content.filename)}
+          onClick={() => handleDelete(Content.targetName)}
           className="delete-button"
         >
           삭제
