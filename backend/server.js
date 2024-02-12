@@ -179,6 +179,7 @@ app.get("/trash_files", async (req, res) => {
 
     // 가져온 데이터를 클라이언트에 응답
     res.json(trashData);
+    console.log(trashData);
 
     console.log("Trash files retrieved successfully");
   } catch (error) {
