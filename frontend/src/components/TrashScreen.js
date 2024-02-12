@@ -14,6 +14,7 @@ function TrashScreen() {
         }
         console.log("받은 응답:",response);
         const data = await response.json();
+        console.log("받은 데이터:",data);
         
         // data가 배열인지 확인 후 filename만 추출하여 상태 업데이트
       if (Array.isArray(data)) {
