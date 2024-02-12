@@ -9,7 +9,7 @@ const keywords = require("./keywords");
 const summary = require("./summary");
 const synonyms = require("./synonyms");
 const { searchInScript, searchInKeywords } = require("./searching");
-import AudioPlayer from 'react-audio-player';
+import AudioPlayer from "react-audio-player";
 
 const app = express();
 app.use(bodyParser.json());
@@ -228,18 +228,14 @@ app.delete("/move_to_trash", async (req, res) => {
           .deleteOne({ filename: documentName });
 
         if (deleteResult.deletedCount === 1) {
-          res
-            .status(200)
-            .json({
-              message: "문서가 성공적으로 삭제되고 휴지통으로 이동되었습니다.",
-            });
+          res.status(200).json({
+            message: "문서가 성공적으로 삭제되고 휴지통으로 이동되었습니다.",
+          });
         } else {
-          res
-            .status(500)
-            .json({
-              message:
-                "휴지통으로 이동한 문서를 'files' 컬렉션에서 삭제하는 중 오류가 발생했습니다.",
-            });
+          res.status(500).json({
+            message:
+              "휴지통으로 이동한 문서를 'files' 컬렉션에서 삭제하는 중 오류가 발생했습니다.",
+          });
         }
       } else {
         res

@@ -89,29 +89,29 @@ const ScriptDisplay = () => {
 
   // 파일 삭제 이벤트 핸들러
   const handleDelete = (fileName) => {
-    const isConfirmed = window.confirm('파일을 휴지통으로 옮기시겠습니까?');
-    if(isConfirmed){
-        // TODO: 파일 삭제 로직 추가
+    const isConfirmed = window.confirm("파일을 휴지통으로 옮기시겠습니까?");
+    if (isConfirmed) {
+      // TODO: 파일 삭제 로직 추가
       console.log(`Delete file: ${fileName}`);
 
-
-      const deleteEndpoint = 'http://52.78.157.198:5000/move_to_trash';
+      const deleteEndpoint = "http://52.78.157.198:5000/move_to_trash";
 
       // Sample request using fetch
-      axios.delete(deleteEndpoint, 
-        {headers: {'Content-Type': 'application/json'}},
-        {fileName: fileName } // Send the file name or other necessary data
-      )
-      .then(response => {
-        // Handle success response if needed
-        console.log('File deletion success', response.data);
-      })
-      .catch((error) => {
-        // Handle error if needed
-        console.error("File deletion failed", error);
-      });
+      axios
+        .delete(
+          deleteEndpoint,
+          { headers: { "Content-Type": "application/json" } },
+          { fileName: fileName } // Send the file name or other necessary data
+        )
+        .then((response) => {
+          // Handle success response if needed
+          console.log("File deletion success", response.data);
+        })
+        .catch((error) => {
+          // Handle error if needed
+          console.error("File deletion failed", error);
+        });
     }
-    
   };
 
   // 데이터가 존재하는 경우에 대한 처리
@@ -122,16 +122,24 @@ const ScriptDisplay = () => {
       <AudioPlayer
         autoPlay
         controls
-        src={`http://52.78.157.198:5000/get_file/${receivedData.filename}`}
+        src={`http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
+          receivedData.filename
+        )}`}
         onPlay={() => console.log("Audio is playing")}
         // 필요한 경우 추가적인 속성들을 설정할 수 있습니다.
       />
       <p>script: {Content.scripts}</p>
       <div className="file-actions">
-        <button onClick={() => handleEdit(receivedData.scripts)} className="edit-button">
+        <button
+          onClick={() => handleEdit(receivedData.scripts)}
+          className="edit-button"
+        >
           수정
         </button>
-        <button onClick={() => handleDelete(receivedData.filename)} className="delete-button">
+        <button
+          onClick={() => handleDelete(receivedData.filename)}
+          className="delete-button"
+        >
           삭제
         </button>
       </div>
