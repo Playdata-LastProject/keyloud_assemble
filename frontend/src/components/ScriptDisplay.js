@@ -11,7 +11,7 @@ const ScriptDisplay = () => {
   const [Content, setContents] = useState({});
   const [error, setError] = useState(null);
   const [splitedScript, spliting] = useState([]);
-  const [audioData, setAudioData] = useState("");
+  const [audioData, setAudioData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,18 +38,16 @@ const ScriptDisplay = () => {
   const fetchAudioData = async () => {
     try {
       if (location.state.data.filename) {
-        const response = await axios.get(
+        const response = await fetch(
           `http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
             location.state.data.filename
           )}`
-          /*{
+        );
+        /*{
             responseType: "blob", // 이진 데이터로 응답 받음
           }*/
-        );
-
-        const blob = new Blob([response.data], { type: Content.mimeType });
-        const url = URL.createObjectURL(blob);
-        setAudioData(url);
+        const data = await response.arrayBuffer();
+        setAudioData(data);
         setLoading(false);
       }
     } catch (error) {
@@ -153,13 +151,13 @@ const ScriptDisplay = () => {
         <div>No audio data available</div>
       ) : (
         // 오디오 데이터가 존재하는 경우
-        <AudioPlayer
-          autoPlay
-          controls
-          src={audioData}
-          type={Content.mimeType}
-          onPlay={() => console.log("Audio is playing")}
-        />
+        <audio controls>
+          <source
+            src={URL.createObjectURL(new Blob([audioData]))}
+            type="audio/wav"
+          />
+          Your browser does not support the audio element.
+        </audio>
       )}
       <p>script: {Content.scripts}</p>
       <div className="file-actions">
