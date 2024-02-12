@@ -101,11 +101,10 @@ const ScriptDisplay = () => {
 
       // Sample request using fetch
       axios
-        .delete(
-          deleteEndpoint,{
+        .delete(deleteEndpoint, {
           data: { fileName: filename }, // data 속성으로 데이터 전달
           headers: { "Content-Type": "application/json" },
-          })
+        })
         .then((response) => {
           // Handle success response if needed
           console.log("File deletion success", response.data);
@@ -128,6 +127,7 @@ const ScriptDisplay = () => {
         src={`http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
           receivedData.filename
         )}`}
+        type={Content.mimeType} // MIME 타입 추가
         onPlay={() => console.log("Audio is playing")}
         // 필요한 경우 추가적인 속성들을 설정할 수 있습니다.
       />

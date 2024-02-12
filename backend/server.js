@@ -357,6 +357,7 @@ app.get("/contents", async (req, res) => {
       folderName: 0,
       filename: 0,
       content: 1,
+      mimeType:1,
       scripts: 1,
       summary: 1,
       keywords: 0,
