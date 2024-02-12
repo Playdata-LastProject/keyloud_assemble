@@ -11,7 +11,7 @@ const ScriptDisplay = () => {
   const [Content, setContents] = useState({});
   const [error, setError] = useState(null);
   const [splitedScript, spliting] = useState([]);
-  const [audioData, setAudioData] = useState(null);
+  const [audioData, setAudioData] = useState(new Audio());
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,7 +46,9 @@ const ScriptDisplay = () => {
             responseType: "blob", // 이진 데이터로 응답 받음
           }
         );
-        setAudioData(response.data);
+        const audioBlob = new Blob([response.data], { type: Content.mimeType });
+        const url = URL.createObjectURL(audioBlob);
+        setAudioData(new Audio(url));
         setLoading(false);
       }
     } catch (error) {
@@ -153,7 +155,7 @@ const ScriptDisplay = () => {
         <AudioPlayer
           autoPlay={true}
           controls={true}
-          src={URL.createObjectURL(audioData)}
+          src={audioData}
           type={Content.mimeType}
           onPlay={() => console.log("Audio is playing")}
         />
