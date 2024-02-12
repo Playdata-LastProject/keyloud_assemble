@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import AudioPlayer from "react-audio-player";
+//import AudioPlayer from "react-audio-player";
 
 const ScriptDisplay = () => {
   const location = useLocation();
@@ -11,7 +11,7 @@ const ScriptDisplay = () => {
   const [Content, setContents] = useState({});
   const [error, setError] = useState(null);
   const [splitedScript, spliting] = useState([]);
-  const [audioData, setAudioData] = useState(null);
+  const [audioData, setAudioData] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,7 +47,10 @@ const ScriptDisplay = () => {
             responseType: "blob", // 이진 데이터로 응답 받음
           }*/
         const data = await response.arrayBuffer();
-        setAudioData(data);
+        const blob = new Blob([data]);
+        const audioElement = document.getElementById("audio");
+        const audioURL = URL.createObjectURL(blob);
+        setAudioData(audioURL);
         setLoading(false);
       }
     } catch (error) {
@@ -152,10 +155,7 @@ const ScriptDisplay = () => {
       ) : (
         // 오디오 데이터가 존재하는 경우
         <audio controls>
-          <source
-            src={URL.createObjectURL(new Blob([audioData]))}
-            type={Content.mimeType}
-          />
+          <source src={audioData} type={Content.mimeType} />
           Your browser does not support the audio element.
         </audio>
       )}
