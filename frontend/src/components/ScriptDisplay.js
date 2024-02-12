@@ -124,17 +124,23 @@ const ScriptDisplay = () => {
         autoPlay
         controls
         src={`http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
-          receivedData.filename
+          Content.filename
         )}`}
         onPlay={() => console.log("Audio is playing")}
         // 필요한 경우 추가적인 속성들을 설정할 수 있습니다.
       />
       <p>script: {Content.scripts}</p>
       <div className="file-actions">
-        <button onClick={() => handleEdit(Content.scripts)} className="edit-button">
+        <button
+          onClick={() => handleEdit(Content.scripts)}
+          className="edit-button"
+        >
           수정
         </button>
-        <button onClick={() => handleDelete(Content.filename)} className="delete-button">
+        <button
+          onClick={() => handleDelete(Content.filename)}
+          className="delete-button"
+        >
           삭제
         </button>
       </div>
