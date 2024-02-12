@@ -41,12 +41,15 @@ const ScriptDisplay = () => {
         const response = await axios.get(
           `http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
             location.state.data.filename
-          )}`,
-          {
+          )}`
+          /*{
             responseType: "blob", // 이진 데이터로 응답 받음
-          }
+          }*/
         );
-        setAudioData(response.data);
+
+        const blob = new Blob([response.data], { type: Content.mimeType });
+        const url = URL.createObjectURL(blob);
+        setAudioData(url);
         setLoading(false);
       }
     } catch (error) {
@@ -153,8 +156,8 @@ const ScriptDisplay = () => {
         <AudioPlayer
           autoPlay
           controls
-          src={URL.createObjectURL(audioData)}
-          type={Content.mimeType}
+          src={audioData}
+          //type={Content.mimeType}
           onPlay={() => console.log("Audio is playing")}
         />
       )}
