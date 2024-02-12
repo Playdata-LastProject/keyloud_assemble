@@ -8,28 +8,25 @@ function TrashScreen() {
   useEffect(() => {
     fetchTrashData();
   }, []);
-    const fetchTrashData = async () => {
-      try {
-        const response = await fetch('http://52.78.157.198:5000/trash_files'); // 백엔드 API 엔드포인트로 수정
-        if (!response.ok) {
-          throw new Error('휴지통 데이터를 가져오지 못했습니다.');
-        }
-
-        const data = await response.json();
-        
-        // data가 배열인지 확인 후 filename만 추출하여 상태 업데이트
-        if (Array.isArray(data)) {
-          setItems(data);
-        } else {
-        console.error('올바르지 않은 데이터 형식입니다.');
-        }
-      } catch (error) {
-        console.error('휴지통 데이터를 가져오는 중 오류 발생', error);
+  const fetchTrashData = async () => {
+    try {
+      const response = await fetch('http://52.78.157.198:5000/trash_files'); // 백엔드 API 엔드포인트로 수정
+      if (!response.ok) {
+        throw new Error('휴지통 데이터를 가져오지 못했습니다.');
       }
-    };
 
-
- 
+      const data = await response.json();
+      
+      // data가 배열인지 확인 후 filename만 추출하여 상태 업데이트
+      if (Array.isArray(data)) {
+        setItems(data);
+      } else {
+      console.error('올바르지 않은 데이터 형식입니다.');
+      }
+    } catch (error) {
+      console.error('휴지통 데이터를 가져오는 중 오류 발생', error);
+    }
+  };
 
   const emptyTrash = () => {
     const isConfirmed = window.confirm('휴지통의 모든 항목을 영구적으로 삭제하시겠습니까?');
