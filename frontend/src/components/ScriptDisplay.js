@@ -48,7 +48,8 @@ const ScriptDisplay = () => {
           }*/
         const data = await response.arrayBuffer();
         const blob = new Blob([data]);
-        setAudioData(blob);
+        url = URL.createObjectURL(blob);
+        setAudioData(url);
         setLoading(false);
       }
     } catch (error) {
@@ -153,10 +154,7 @@ const ScriptDisplay = () => {
       ) : (
         // 오디오 데이터가 존재하는 경우
         <audio controls>
-          <source
-            src={URL.createObjectURL(audioData)}
-            type={Content.mimeType}
-          />
+          <source src={audioData} type={Content.mimeType} />
           Your browser does not support the audio element.
         </audio>
       )}
