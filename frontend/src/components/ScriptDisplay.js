@@ -154,14 +154,14 @@ const ScriptDisplay = () => {
       <p>file name: {receivedData.filename}</p>
       <p>MIME TYPE: {Content.mimeType}</p>
       <p>content: {bufferString}</p>
-      {!audioData ? (
+      {!receivedData.filename ? ( //audioData ? (
         // 오디오 데이터가 존재하지 않는 경우의 처리
         <div>No audio data available</div>
       ) : (
         <audio
           controls
           src={`http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
-            filename
+            receivedData.filename
           )}`}
         >
           Your browser does not support the audio element.
