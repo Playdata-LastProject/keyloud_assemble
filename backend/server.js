@@ -96,7 +96,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       folderName: req.body.selectedFolder,
       filename: customName,
       content: req.file.buffer, // 바이너리 데이터로 저장
-      mimeType: mime.lookup(req.file.originalname),
+      mimeType: mime.lookup(req.file.buffer),
       scripts: text_result,
       summary: summary_result,
       keywords: keywords_result,
@@ -361,6 +361,7 @@ app.get("/contents", async (req, res) => {
       folderName: 0,
       filename: 0,
       content: 1,
+      mimeType: 1,
       scripts: 1,
       summary: 1,
       keywords: 0,
@@ -390,11 +391,11 @@ app.get("/get_audio", async (req, res) => {
     const results = await collection.findOne({
       filename: filename,
       content: { $exists: true },
-      mimeType: { $exists: true },
+      //mimeType: { $exists: true },
     });
     // 파일의 MIME 타입에 따라 Content-Type 설정
-    const MIME = results.mimeType;
-    res.setHeader(MIME); // 예시로 'audio/
+    /*const MIME = results.mimeType;
+    res.setHeader("Content-Type", MIME); // 예시로 'audio/*/
     res.send(results.content);
   } catch (error) {
     console.error("Error retrieving file:", error);
