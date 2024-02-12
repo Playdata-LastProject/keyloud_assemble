@@ -223,13 +223,13 @@ app.delete("/move_to_trash", async (req, res) => {
         .collection("trash")
         .insertOne(fileData);
 
-      if (moveToTrashResult.insertedCount > 0) {
+      if (moveToTrashResult.acknowledged) {
         // 파일을 'files' 컬렉션에서 삭제
         const deleteResult = await conn.db
           .collection("files")
           .deleteOne({ filename: documentName });
 
-        if (deleteResult.deletedCount === 1) {
+        if (deleteResult.acknowledged) {
           res.status(200).json({
             message: "문서가 성공적으로 삭제되고 휴지통으로 이동되었습니다.",
           });
