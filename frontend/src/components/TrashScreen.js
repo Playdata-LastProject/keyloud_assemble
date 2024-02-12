@@ -12,13 +12,13 @@ function TrashScreen() {
         if (!response.ok) {
           throw new Error('휴지통 데이터를 가져오지 못했습니다.');
         }
-        console.log("받은 응답:",response);
+
         const data = await response.json();
         console.log("받은 데이터:",data);
         
         // data가 배열인지 확인 후 filename만 추출하여 상태 업데이트
       if (Array.isArray(data)) {
-        const filenames = data.map(item => item.filename);
+        const filenames = data[0].map(item => item.filename);
         setItems(filenames);
       } else {
         console.error('올바르지 않은 데이터 형식입니다.');
