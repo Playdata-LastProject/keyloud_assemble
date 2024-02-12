@@ -27,7 +27,7 @@ function TrashScreen() {
     };
 
     fetchTrashData();
-  }, []); // 빈 배열을 넣어 한 번만 실행되도록 설정
+  }, [items]);
 
   const emptyTrash = () => {
     const isConfirmed = window.confirm('휴지통의 모든 항목을 영구적으로 삭제하시겠습니까?');
