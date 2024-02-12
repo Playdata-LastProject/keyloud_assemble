@@ -146,6 +146,7 @@ const ScriptDisplay = () => {
     <div>
       <h2>Received Data</h2>
       <p>file name: {receivedData.filename}</p>
+      <p>MIME TYPE: {Content.mimeType}</p>
       <AudioPlayer
         autoPlay
         controls
