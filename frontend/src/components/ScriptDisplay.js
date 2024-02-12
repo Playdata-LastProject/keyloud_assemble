@@ -93,23 +93,13 @@ const ScriptDisplay = () => {
     const deleteEndpoint = 'http://52.78.157.198:5000/move_to_trash';
 
     // Sample request using fetch
-    fetch(deleteEndpoint, {
-      method: 'DELETE', // Use 'DELETE' method for deletion
-      headers: {
-        'Content-Type': 'application/json',
-        // Add any other headers if needed
-      },
-      body: JSON.stringify({ fileName }), // Send the file name or other necessary data
-    })
+    axios.delete(deleteEndpoint, 
+      {headers: {'Content-Type': 'application/json'}},
+      {fileName: fileName } // Send the file name or other necessary data
+    )
       .then(response => {
-        if (!response.ok) {
-          throw new Error('Deleting file failed');
-        }
-        return response.json();
-      })
-      .then(data => {
         // Handle success response if needed
-        console.log('File deletion success', data);
+        console.log('File deletion success', response.data);
       })
       .catch(error => {
         // Handle error if needed
@@ -124,10 +114,10 @@ const ScriptDisplay = () => {
       <p>file name: {receivedData.filename}</p>
       <p>script: {Content.scripts}</p>
       <div className="file-actions">
-        <button onClick={handleEdit} className="edit-button">
+        <button onClick={() => handleEdit(receivedData.scripts)} className="edit-button">
           수정
         </button>
-        <button onClick={handleDelete} className="delete-button">
+        <button onClick={() => handleDelete(receivedData.filename)} className="delete-button">
           삭제
         </button>
       </div>
