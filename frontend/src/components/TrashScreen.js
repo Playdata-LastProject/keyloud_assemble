@@ -6,6 +6,8 @@ function TrashScreen() {
 
   // 페이지 로딩 시 휴지통 데이터 가져오기
   useEffect(() => {
+    fetchTrashData();
+  }, []);
     const fetchTrashData = async () => {
       try {
         const response = await fetch('http://52.78.157.198:5000/trash_files'); // 백엔드 API 엔드포인트로 수정
@@ -26,8 +28,8 @@ function TrashScreen() {
       }
     };
 
-    fetchTrashData();
-  }, []);
+
+ 
 
   const emptyTrash = () => {
     const isConfirmed = window.confirm('휴지통의 모든 항목을 영구적으로 삭제하시겠습니까?');
