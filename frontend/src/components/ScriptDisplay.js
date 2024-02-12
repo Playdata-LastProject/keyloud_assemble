@@ -145,7 +145,6 @@ const ScriptDisplay = () => {
       <h2>Received Data</h2>
       <p>file name: {receivedData.filename}</p>
       <p>MIME TYPE: {Content.mimeType}</p>
-      <p>audio: {audioData}</p>
       {!audioData ? (
         // 오디오 데이터가 존재하지 않는 경우의 처리
         <div>No audio data available</div>
