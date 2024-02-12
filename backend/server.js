@@ -177,9 +177,12 @@ app.get("/trash_files", async (req, res) => {
     // trash collection의 모든 문서 가져오기
     const trashData = await collection.find({}).toArray();
 
+    // 가져온 데이터에서 filename 필드의 값만 추출하여 배열로 만듦
+    const filenames = trashData.map(item => item.filename);
+
     // 가져온 데이터를 클라이언트에 응답
-    res.json(trashData);
-    console.log(trashData);
+    res.json(filenames);
+    console.log("응답한 이름:",filenames);
 
     console.log("Trash files retrieved successfully");
   } catch (error) {

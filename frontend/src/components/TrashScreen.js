@@ -12,10 +12,16 @@ function TrashScreen() {
         if (!response.ok) {
           throw new Error('휴지통 데이터를 가져오지 못했습니다.');
         }
-        console.log("받은 응답:",response);
-        const data = await response.body;
-        console.log("받은 데이터:",data.filename);
-        setItems(data.filename); // 백엔드에서 받은 데이터로 상태 업데이트
+
+        const data = await response.json();
+        console.log("받은 데이터:",data);
+        
+        // data가 배열인지 확인 후 filename만 추출하여 상태 업데이트
+        if (Array.isArray(data)) {
+          setItems(data);
+        } else {
+        console.error('올바르지 않은 데이터 형식입니다.');
+        }
       } catch (error) {
         console.error('휴지통 데이터를 가져오는 중 오류 발생', error);
       }
@@ -58,7 +64,7 @@ function TrashScreen() {
       <h1>휴지통</h1>
       <ul>
         {items.map(item => (
-          <li key={item.id}>{item.name}</li>
+          <li key={item}>{item}</li>
         ))}
       </ul>
       {items.length > 0 && (
