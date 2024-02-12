@@ -9,6 +9,7 @@ const keywords = require("./keywords");
 const summary = require("./summary");
 const synonyms = require("./synonyms");
 const { searchInScript, searchInKeywords } = require("./searching");
+import AudioPlayer from 'react-audio-player';
 
 const app = express();
 app.use(bodyParser.json());
@@ -227,26 +228,35 @@ app.delete("/move_to_trash", async (req, res) => {
           .deleteOne({ filename: documentName });
 
         if (deleteResult.deletedCount === 1) {
-          res.status(200).json({ message: "문서가 성공적으로 삭제되고 휴지통으로 이동되었습니다." });
+          res
+            .status(200)
+            .json({
+              message: "문서가 성공적으로 삭제되고 휴지통으로 이동되었습니다.",
+            });
         } else {
-          res.status(500).json({ message: "휴지통으로 이동한 문서를 'files' 컬렉션에서 삭제하는 중 오류가 발생했습니다." });
+          res
+            .status(500)
+            .json({
+              message:
+                "휴지통으로 이동한 문서를 'files' 컬렉션에서 삭제하는 중 오류가 발생했습니다.",
+            });
         }
       } else {
-        res.status(500).json({ message: "휴지통으로 이동 중 오류가 발생했습니다." });
+        res
+          .status(500)
+          .json({ message: "휴지통으로 이동 중 오류가 발생했습니다." });
       }
     } else {
       res.status(404).json({
-        message: "삭제할 문서를 찾지 못했거나 데이터를 가져오는 중 오류가 발생했습니다.",
+        message:
+          "삭제할 문서를 찾지 못했거나 데이터를 가져오는 중 오류가 발생했습니다.",
       });
     }
-
-
   } catch (error) {
     console.error("Error during document deletion:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
-
 
 app.delete("/delete_files", async (req, res) => {
   try {
@@ -264,8 +274,6 @@ app.delete("/delete_files", async (req, res) => {
         message: "삭제할 문서를 찾지 못했거나 삭제 중 오류가 발생했습니다.",
       });
     }
-
-
   } catch (error) {
     console.error("Error during document deletion:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -368,6 +376,26 @@ app.get("/contents", async (req, res) => {
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get("/get_audio", async (req, res) => {
+  const filename = req.query.filename;
+
+  try {
+    // 데이터베이스에서 해당 파일의 바이너리 데이터 가져오기
+    const Audio = await conn.db
+      .collection("files")
+      .findOne({ filename: filename });
+
+    // 파일의 MIME 타입에 따라 Content-Type 설정
+    res.setHeader("Content-Type", "audio/mpeg"); // 예시로 'audio/mpeg'을 사용하였습니다. 실제 MIME 타입에 맞게 설정해야 합니다.
+
+    // 바이너리 데이터를 응답으로 보냄
+    res.send(Audio.content);
+  } catch (error) {
+    console.error("Error retrieving file:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
