@@ -147,13 +147,19 @@ const ScriptDisplay = () => {
       <h2>Received Data</h2>
       <p>file name: {receivedData.filename}</p>
       <p>MIME TYPE: {Content.mimeType}</p>
-      <AudioPlayer
-        autoPlay
-        controls
-        src={URL.createObjectURL(audioData)} // 이진 데이터를 URL 객체로 변환하여 사용
-        type={Content.mimeType} // MIME 타입 추가
-        onPlay={() => console.log("Audio is playing")}
-      />
+      {!audioData ? (
+        // 오디오 데이터가 존재하지 않는 경우의 처리
+        <div>No audio data available</div>
+      ) : (
+        // 오디오 데이터가 존재하는 경우
+        <AudioPlayer
+          autoPlay
+          controls
+          src={URL.createObjectURL(audioData)}
+          type={Content.mimeType}
+          onPlay={() => console.log("Audio is playing")}
+        />
+      )}
       <p>script: {Content.scripts}</p>
       <div className="file-actions">
         <button
