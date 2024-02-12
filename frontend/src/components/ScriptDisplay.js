@@ -126,7 +126,7 @@ const ScriptDisplay = () => {
         autoPlay
         controls
         src={`http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
-          Content.filename
+          receivedData.filename
         )}`}
         onPlay={() => console.log("Audio is playing")}
         // 필요한 경우 추가적인 속성들을 설정할 수 있습니다.
