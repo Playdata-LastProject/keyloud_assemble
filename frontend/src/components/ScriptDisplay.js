@@ -22,13 +22,13 @@ const ScriptDisplay = () => {
           setType(location.state.type);
           setLoading(false);
           await getContents(location.state.data.filename);
-          await fetchAudioData(location.state.data.filename);
+          //await fetchAudioData(location.state.data.filename);
         } else {
           setReceivedData(location.state.data);
           setType(location.state.type);
           setLoading(false);
           await getContents(location.state.data.filename);
-          await fetchAudioData(location.state.data.filename);
+          //await fetchAudioData(location.state.data.filename);
         }
       }
     };
@@ -36,7 +36,7 @@ const ScriptDisplay = () => {
     fetchData();
   }, [location.state]);
 
-  const fetchAudioData = async (filename) => {
+  /*  const fetchAudioData = async (filename) => {
     try {
       if (filename) {
         const response = await fetch(
@@ -44,13 +44,13 @@ const ScriptDisplay = () => {
             filename
           )}`
         );
-        /*{
+        {
             responseType: "blob", // 이진 데이터로 응답 받음
-          }*/
+          }
         const data = await response.arrayBuffer();
 
         const textDecoder = new TextDecoder();
-        const audioDataString = textDecoder.decode(data);
+        const audioDataString = textDecoder.decode(response);
 
         setBufferString(audioDataString);
         const blob = new Blob([data]);
@@ -61,7 +61,7 @@ const ScriptDisplay = () => {
       setError(error);
       setLoading(false);
     }
-  };
+  };*/
 
   const getContents = async (fileID) => {
     setLoading(true);
@@ -158,14 +158,22 @@ const ScriptDisplay = () => {
         // 오디오 데이터가 존재하지 않는 경우의 처리
         <div>No audio data available</div>
       ) : (
+        <audio
+          controls
+          src={`http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
+            filename
+          )}`}
+        >
+          Your browser does not support the audio element.
+        </audio>
         // 오디오 데이터가 존재하는 경우
-        <audio controls>
+        /*<audio controls>
           <source
             src={URL.createObjectURL(audioData)}
             type={Content.mimeType}
           />
           Your browser does not support the audio element.
-        </audio>
+        </audio>*/
       )}
       <p>script: {Content.scripts}</p>
       <div className="file-actions">
@@ -215,6 +223,16 @@ const ScriptDisplay = () => {
       )}
       {type === 2 && (
         <ul>
+          {receivedData.index.map((index) => (
+            <li key={index}>{Content.synonyms[index]}</li>
+          ))}
+        </ul>
+      )}
+      {type === 4 && (
+        <ul>
+          {receivedData.index.map((index) => (
+            <li key={index}>{Content.keywords[index]}</li>
+          ))}
           {receivedData.index.map((index) => (
             <li key={index}>{Content.synonyms[index]}</li>
           ))}
