@@ -103,8 +103,8 @@ const ScriptDisplay = () => {
       axios
         .delete(
           deleteEndpoint,
-          { headers: { "Content-Type": "application/json" } },
-          { fileName: filename } // Send the file name or other necessary data
+          { fileName: filename },
+          { headers: { "Content-Type": "application/json" } }
         )
         .then((response) => {
           // Handle success response if needed
