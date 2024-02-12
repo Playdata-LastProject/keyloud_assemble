@@ -11,7 +11,7 @@ const ScriptDisplay = () => {
   const [Content, setContents] = useState({});
   const [error, setError] = useState(null);
   const [splitedScript, spliting] = useState([]);
-  const [audioData, setAudioData] = useState(null);
+  const [audioData, setAudioData] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -157,7 +157,7 @@ const ScriptDisplay = () => {
           autoPlay
           controls
           src={audioData}
-          //type={Content.mimeType}
+          type={Content.mimeType}
           onPlay={() => console.log("Audio is playing")}
         />
       )}
