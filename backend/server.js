@@ -12,7 +12,6 @@ const { searchInScript, searchInKeywords } = require("./searching");
 const mime = require("mime");
 const path = require("path");
 const ffmpeg = require("fluent-ffmpeg");
-const fileType = require("file-type");
 
 const app = express();
 app.use(bodyParser.json());
