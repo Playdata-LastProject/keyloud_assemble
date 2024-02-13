@@ -22,6 +22,7 @@ const HomeScreen = () => {
   const [customFileName, setCustomFileName] = useState("");
   const [selectedFolder, setSelectedFolder] = useState("");
   const [errorInFolder, setErrorInFolder] = useState("");
+  const [messageFromUpload, setMessageFromUpload] = useState("");
   const [Folders, setFoldersList] = useState([]);
 
 
@@ -88,6 +89,7 @@ const HomeScreen = () => {
       });
 
       const data = await response.json();
+      setMessageFromUpload(data.message);
       console.log(data.message); // 서버로부터 받은 응답 메시지 출력
       updateLoading(false);
       updateComplete(true);
@@ -135,7 +137,7 @@ const HomeScreen = () => {
       //const data = await response.json();
     } catch (error) {
       console.error("Error uploading file:", error);
-      }
+    }
   };
 
   const handleItemClick = (item) => {
@@ -275,7 +277,7 @@ const HomeScreen = () => {
             업로드
           </button>
           {loading && <p>업로드 중입니다. 잠시만 기다려주세요.</p>}
-          {complete && <p>업로드 완료!</p>}
+          {complete && <p>{messageFromUpload}</p>}
         </div>
       )}
 

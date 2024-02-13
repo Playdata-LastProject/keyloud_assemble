@@ -12,6 +12,9 @@ const { searchInScript, searchInKeywords } = require("./searching");
 const mime = require("mime");
 const path = require("path");
 const ffmpeg = require("fluent-ffmpeg");
+const ffmpegPath = require("ffmpeg-static");
+ffmpeg.setFfmpegPath(ffmpegPath);
+const wav = require("node-wav");
 
 const app = express();
 app.use(bodyParser.json());
@@ -67,13 +70,29 @@ app.get("/listUpFiles", async (req, res) => {
   res.send(result);
 });
 
+async function convertToLinear16(audioPath) {
+  return new Promise((resolve, reject) => {
+    const linear16FilePath = audioPath.replace(/\.[^/.]+$/, "_linear16_2.wav");
+
+    ffmpeg()
+      .input(audioPath)
+      .audioCodec("pcm_s16le")
+      .toFormat("wav")
+      .on("end", () => resolve(linear16FilePath))
+      .on("error", (err) => reject(err))
+      .save(linear16FilePath);
+  });
+}
+
 // 파일 업로드 라우트
 app.post("/upload_files", multer().single("files"), async (req, res) => {
   const collection = conn.db.collection("files");
   const customName = req.body.customFileName;
   const sameName = await collection.find({ filename: customName }).toArray();
   if (sameName.length > 0) {
-    return res.send(["이미 있는 이름입니다. 다른 이름을 지어주세요!"]);
+    return res.json({
+      message: "이미 있는 이름입니다. 다른 이름을 지어주세요!",
+    });
   }
   try {
     if (!req.file) {
@@ -93,40 +112,16 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
 
     const timestamp_result = s2t_result[1];
 
-    const extension = path.extname(req.file.originalname);
-    const mimeType = mime.getType(extension);
-
-    ffmpeg.ffprobe(copy_path, (err, metadata) => {
-      if (err) {
-        console.error("Error analyzing file:", err);
-        return;
-      }
-
-      try {
-        const audioStream = metadata.streams.find(
-          (stream) => stream.codec_type === "audio"
-        );
-        if (!audioStream) {
-          throw new Error("No audio stream found in the file");
-        }
-
-        const numChannels = audioStream.channels;
-        const sampleRate = audioStream.sample_rate;
-
-        console.log("Number of Channels:", numChannels);
-        console.log("Sample Rate:", sampleRate);
-      } catch (error) {
-        console.error("Error extracting metadata:", error);
-      }
-    });
+    //const extension = path.extname(req.file.originalname);
+    //const mimeType = mime.getType(extension);
+    const linear16FilePath = await convertToLinear16(copy_path);
     // 파일이 업로드된 후의 처리
     const fileDetails = {
       folderName: req.body.selectedFolder,
       filename: customName,
-      content: fs.readFileSync(copy_path), //req.file.buffer, // 바이너리 데이터로 저장
-      mimeType: mimeType,
-      numChannels: numChannels,
-      sampleRate: sampleRate,
+      content: fs.readFileSync(linear16FilePath), //req.file.buffer, // 바이너리 데이터로 저장
+      mimeType: "audio/wav", //mimeType,
+      sampleRate: wav.decode(linear16FilePath).sampleRate, //sampleRate,
       scripts: text_result,
       summary: summary_result,
       keywords: keywords_result,
@@ -195,7 +190,7 @@ app.post("/update_summary", async (req, res) => {
     }
   } catch (error) {
     console.error("Error during update:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    return res.send(["알 수 없는 오류 발생!"]);
   }
 });
 
@@ -392,7 +387,6 @@ app.get("/contents", async (req, res) => {
       filename: 0,
       content: 1,
       mimeType: 1,
-      numChannels: 1,
       sampleRate: 1,
       scripts: 1,
       summary: 1,

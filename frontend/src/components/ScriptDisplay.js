@@ -16,7 +16,7 @@ const ScriptDisplay = () => {
   const [Content, setContents] = useState({});
   const [error, setError] = useState(null);
   const [splitedScript, spliting] = useState([]);
-  const [audioData, setAudioData] = useState(null);
+  const [audioData, setAudioData] = useState("");
   const [audioStream, setAudioStream] = useState("");
   const [bufferString, setBufferString] = useState("");
 
@@ -33,58 +33,35 @@ const ScriptDisplay = () => {
           )}`
         );
         setAudioData(response.data);
-        /*const audioBlob = new Blob([response.data], { type: "audio/*" });
-        const stream = await audioBlob.stream();
-        setAudioStream(stream);
-        const audioUrl = URL.createObjectURL(audioBlob);
-        setAudioData(audioUrl);*/
       }
     };
 
     fetchData();
   }, [location.state]);
 
-  /*const fetchAudioData = async (filename) => {
-    try {
-      if (filename) {
-        const response = await fetch(
-          `http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
-            filename
-          )}`
-        );
-
-        const audioBlob = new Blob([response.data], { type: "audio/*" });
-        const audioUrl = URL.createObjectURL(audioBlob);
-        setAudioData(audioUrl);
-
-        /*const data = await response.arrayBuffer();
-
-        const textDecoder = new TextDecoder();
-        const audioDataString = textDecoder.decode(response);
-
-        setBufferString(audioDataString);
-        const blob = new Blob([data]);
-        setAudioData(blob);
-        setLoading(false);
-      }
-    } catch (error) {
-      setError(error);
-      setLoading(false);
-    }
-  };*/
-
   const handlePlay = () => {
-    //const tmp = new Audio(audioData); //passing your state (hook)
-    //tmp.srcObject = audioStream;
-    //tmp.play(); //simple play of an audio element.
 
-    if (audioData && Content.mimeType) {
-      const audioBlob = new Blob([audioData], { type: Content.mimeType });
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      audio.play();
-    } else {
-      console.error("Audio data not available");
+    if (audioData && Content) {
+      const bytesPerSample = 2; // 16비트 = 2바이트
+      const sampleRate = 44100; // 샘플 레이트 설정
+
+      const audioContext = new AudioContext();
+      const audioBuffer = audioContext.createBuffer(
+        1,
+        audioData.length / bytesPerSample,
+        sampleRate
+      );
+      const audioSource = audioContext.createBufferSource();
+      const channelData = audioBuffer.getChannelData(0);
+
+      for (let i = 0; i < audioData.length; i += bytesPerSample) {
+        // 16비트 정수 값을 -1과 1 사이의 부동소수점 값으로 변환
+        const int16Value = (audioData[i + 1] << 8) | (audioData[i] & 0xff);
+        channelData[i / bytesPerSample] = int16Value / 32768.0; // 정규화
+      }
+      audioSource.buffer = audioBuffer;
+      audioSource.connect(audioContext.destination);
+      audioSource.start();
     }
   };
 
