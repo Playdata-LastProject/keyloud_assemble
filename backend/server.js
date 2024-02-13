@@ -145,7 +145,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       content: fs.readFileSync(linear16FilePath), //req.file.buffer, // 바이너리 데이터로 저장
       mimeType: mimeType,
       numChannels: numChannels,
-      sampleRate: wav.decode(audioFile).sampleRate, //sampleRate,
+      sampleRate: wav.decode(linear16FilePath).sampleRate, //sampleRate,
       scripts: text_result,
       summary: summary_result,
       keywords: keywords_result,
