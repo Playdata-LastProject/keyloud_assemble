@@ -124,7 +124,7 @@ const HomeScreen = () => {
       //const data = await response.json();
     } catch (error) {
       console.error("Error uploading file:", error);
-    }
+      }
   };
 
   const handleItemClick = (item) => {

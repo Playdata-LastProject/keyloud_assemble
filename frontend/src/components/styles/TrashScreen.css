@@ -3,13 +3,13 @@
     padding: 20px;
     max-width: 600px;
     margin: 0 auto;
-    background-color: #f9f9f9;
+    background-color: black;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
   
   .trash-screen h1 {
-    color: #333;
+    color: #7559df;
   }
   
   .trash-screen ul {
@@ -18,25 +18,27 @@
   }
   
   .trash-screen ul li {
-    background-color: #fff;
-    border: 1px solid #ddd;
+    background-color: black;
+    border: 1px solid #7559df;
     padding: 10px;
     margin-bottom: 8px;
     border-radius: 4px;
   }
   
   .empty-button {
-    position: absolute;
-    right: 20px;
-    bottom: 20px;
+    position: fixed;
+    top: 21%;
+    left: 77%;
     padding: 10px 20px;
-    background-color: #d9534f;
+    background-color: black;
     color: white;
-    border: none;
+    border: solid 3px #7559df;
     border-radius: 5px;
     cursor: pointer;
+    margin-bottom: -20px;
+    margin-right: 20px;
   }
   
   .empty-button:hover {
-    background-color: #c9302c;
+    background-color: #573dab;
   }
