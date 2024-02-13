@@ -189,9 +189,9 @@ const FilesInFolder = () => {
           >
             <div className="folder-icon img">
               <img
-                src="/images/file-icon.png"
+                src="/images/mic.ico"
                 alt="폴더 아이콘"
-                style={{ width: "20px", height: "20px" }}
+                style={{ width: "40px", height: "40px" }}
               />
             </div>
             <div className="folder-name">{folder}</div>
