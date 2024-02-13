@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import "./styles/HomeScreen.css";
 import { AppContext } from "../AppContext.js";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./styles/folderContents.css";
@@ -181,28 +180,28 @@ const FilesInFolder = () => {
   };
 
   return (
-    <div>
-      {/* 폴더 아이콘과 폴더명 세트 */}
-      {Folders.map((folder) => (
-        <div
-          className="folder-content"
-          onClick={() => handleFolderIconClick(folder)}
-        >
-          <div className="folder-icon img">
-            <img
-              src="/images/folder-icon.png"
-              alt="폴더 아이콘"
-              style={{ width: "20px", height: "20px" }}
-            />
+    <div className="folder-container">
+        {/* 폴더 아이콘과 폴더명 세트 */}
+        {Folders.map((folder) => (
+          <div
+            className="folder-content"
+            onClick={() => handleFolderIconClick(folder)}
+          >
+            <div className="folder-icon img">
+              <img
+                src="/images/folder-icon.png"
+                alt="폴더 아이콘"
+                style={{ width: "20px", height: "20px" }}
+              />
+            </div>
+            <div className="folder-name">{folder}</div>
           </div>
-          <div className="folder-name">{folder}</div>
-        </div>
-      ))}
+        ))}
 
       {/* 업로드 버튼 */}
       <button className="upload-button" onClick={handleUploadButtonClick}>
         <img
-          src="/images/upload.png"
+          src="/images/upload2.ico"
           alt="업로드 아이콘"
           style={{ width: "40px", height: "35px" }}
         />

@@ -3,9 +3,11 @@
 /* 폴더 아이콘 스타일 */
 .folder-content {
   display: flex;
-  align-items: flex-start;
-  margin-bottom: 10px;
+  align-items: center;
   cursor: pointer;
+  margin-bottom: 10px;
+  max-width: 300px; /* 최대 너비 설정 */
+  padding: 20px;
 }
 
 .folder-icon img {
@@ -13,17 +15,49 @@
   margin-right: 10px;
 }
 
-.folder-name {
-  font-size: 15px;
+.folder-icon {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
 }
+
+.folder-name {
+  flex-grow: 1;
+  padding: 10px;
+  border: solid #7559df;
+  border-radius: 10px;
+  transition: background-color 0.3s ease-in-out;
+  height: 100px;
+  width: 100px;
+}
+
+.folder-content:hover .folder-name {
+  background-color: #573dab; /* hover 시 변경되는 배경색 */
+}
+
+.folder-container {
+  display: flex;
+  flex-wrap: wrap; /* 폴더가 가로로 배열되다가 필요할 때 줄 바꿈 */
+  justify-content: flex-start;
+}
+
 
 /* 업로드 버튼 스타일 */
 .upload-button {
+  background-color: #7559df;
+  border-radius: 50%;
+  overflow: hidden;
+  width: 70px;
+  height: 70px;
+  cursor: pointer;
   position: fixed;
   right: 20px;
   bottom: 20px;
-  padding: 10px;
-  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.upload-button:hover{
+  background-color: #573dab;
 }
 
 /* 업로드 메뉴 스타일 */
@@ -31,7 +65,7 @@
   position: fixed;
   right: 30px;
   bottom: 100px;
-  background-color: #692498;
+  background-color: #7559df;
   border: 1px solid #692498;
   color: #ffffff;
   border-radius: 5px;
@@ -45,13 +79,18 @@
 
 /* 업로드 메뉴 버튼 스타일 */
 .upload-menu-button {
-  background-color: #692498;
+  background-color: #7559df;
+  transition: background-color 0.3s ease-in-out;
   color: #ffffff;
   border: none;
   border-radius: 5px;
   padding: 8px;
   margin-top: 5px;
   cursor: pointer;
+}
+
+.upload-menu-button:hover{
+  background-color: #573dab; /* hover 시 변경되는 배경색 */
 }
 
 /* 폴더 생성 팝업 스타일 */
@@ -65,6 +104,7 @@
   border: 1px solid #ccc;
   border-radius: 10px;
   z-index: 3;
+  padding-right: 25px;
 }
 
 .create-folder-popup input {
@@ -78,7 +118,7 @@
   padding: 8px 16px;
   border: none;
   border-radius: 10px;
-  background-color: #692498;
+  background-color: #7559df;
   color: #fff;
   cursor: pointer;
 }
@@ -94,6 +134,7 @@
   border: 1px solid #ccc;
   border-radius: 10px;
   z-index: 3;
+  padding-top: 0px;
 }
 
 .file-upload-popup input {
@@ -106,7 +147,7 @@
   padding: 8px 16px;
   border: none;
   border-radius: 10px;
-  background-color: #692498;
+  background-color: #7559df;
   color: #fff;
   cursor: pointer;
   margin-top: 10px;
@@ -172,7 +213,32 @@
 
 .close-button {
   float: right;
-  margin-right: -20px;
-  margin-top: -20px;
+  margin-right: -15px;
+  margin-top: -15px;
   margin-bottom: 10px;
+  background-color: #7559df;
+  transition: background-color 0.3s ease-in-out;
+}
+.close-button:hover{
+  background-color: #573dab; 
+}
+
+.folder-container {
+  display: flex;
+  flex-wrap: wrap; /* 폴더가 가로로 배열되다가 필요할 때 줄 바꿈 */
+  justify-content: flex-start;
+}
+
+.create-folder-button{
+  transition: background-color 0.3s ease-in-out;
+}
+.create-folder-button:hover{
+  background-color: #573dab; 
+}
+
+.file-upload-button{
+  transition: background-color 0.3s ease-in-out;
+}
+.file-upload-button:hover{
+  background-color: #573dab; 
 }

@@ -159,7 +159,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <div>
+    <div className="folder-container">
       {/* 폴더 아이콘과 폴더명 세트 */}
       {Folders.map((folder) => (
         <div
@@ -180,7 +180,7 @@ const HomeScreen = () => {
       {/* 업로드 버튼 */}
       <button className="upload-button" onClick={handleUploadButtonClick}>
         <img
-          src="/images/upload.png"
+          src="/images/upload2.ico"
           alt="업로드 아이콘"
           style={{ width: "40px", height: "35px" }}
         />
