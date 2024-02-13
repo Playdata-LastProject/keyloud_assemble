@@ -18,32 +18,34 @@ const App = () => {
   return (
     <Router>
       <AppProvider>
-        <div className="app-container">
-          {/* 헤더는 위쪽에 위치 */}
-          <div className="header-container">
-            <Header />
-          </div>
-
-          <div className="main-container">
-            {/* 왼쪽 메뉴 */}
-            <div className="left-menu">
-              <LeftMenu />
+        <div className="body-back">
+          <div className="app-container">
+            {/* 헤더는 위쪽에 위치 */}
+            <div className="header-container">
+              <Header />
             </div>
 
-            {/* 메인 컨텐츠 영역 */}
-            <div className="main-content">
-              <Routes>
-                <Route path="/" exact element={<HomeScreen />} />
-                <Route path="/keyword/:id" element={<KeywordSearch />} />
-                <Route path="/keyword-result" element={<KeywordResult />} />
-                <Route
-                  path="/file-details/:fileName"
-                  element={<FileDetails />}
-                />
-                <Route path="/trash" element={<TrashScreen />} />
-                <Route path="/details/:id" element={<ScriptDisplay />} />
-                <Route path="/files/:id" element={<FilesInFolder />} />
-              </Routes>
+            <div className="main-container">
+              {/* 왼쪽 메뉴 */}
+              <div className="left-menu">
+                <LeftMenu />
+              </div>
+
+              {/* 메인 컨텐츠 영역 */}
+              <div className="main-content">
+                <Routes>
+                  <Route path="/" exact element={<HomeScreen />} />
+                  <Route path="/keyword/:id" element={<KeywordSearch />} />
+                  <Route path="/keyword-result" element={<KeywordResult />} />
+                  <Route
+                    path="/file-details/:fileName"
+                    element={<FileDetails />}
+                  />
+                  <Route path="/trash" element={<TrashScreen />} />
+                  <Route path="/details/:id" element={<ScriptDisplay />} />
+                  <Route path="/files/:id" element={<FilesInFolder />} />
+                </Routes>
+              </div>
             </div>
           </div>
         </div>
