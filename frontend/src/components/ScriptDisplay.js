@@ -19,7 +19,7 @@ const ScriptDisplay = () => {
   const [audioData, setAudioData] = useState(null);
   const [audioStream, setAudioStream] = useState("");
   const [bufferString, setBufferString] = useState("");
-  const [audioUrl, setAudioUrl] = useState([]);
+  const [audioUrl, setAudioUrl] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
