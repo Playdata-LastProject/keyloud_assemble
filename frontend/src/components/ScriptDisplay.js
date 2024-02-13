@@ -33,6 +33,8 @@ const ScriptDisplay = () => {
             )}`
           );
           const audioBlob = new Blob([response.data], { type: "audio/*" });
+          const stream = await audioBlob.stream();
+          setAudioStream(stream);
           const audioUrl = URL.createObjectURL(audioBlob);
           setAudioData(audioUrl);
         } else {
