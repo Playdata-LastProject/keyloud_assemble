@@ -4,6 +4,8 @@ import axios from "axios";
 import {  useNavigate } from "react-router-dom";
 //import AudioPlayer from "react-audio-player";
 import "./styles/ScriptDisplay.css";
+import AudioPlayer from "react-audio-player";
+
 
 const ScriptDisplay = () => {
   const location = useLocation();
@@ -26,13 +28,27 @@ const ScriptDisplay = () => {
           setType(location.state.type);
           setLoading(false);
           await getContents(location.state.data.filename);
-          await fetchAudioData(location.state.data.filename);
+          const response = await axios.get(
+            `http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
+              location.state.data.filename
+            )}`
+          );
+          const audioBlob = new Blob([response.data], { type: "audio/*" });
+          const audioUrl = URL.createObjectURL(audioBlob);
+          setAudioData(audioUrl);
         } else {
           setReceivedData(location.state.data);
           setType(location.state.type);
           setLoading(false);
           await getContents(location.state.data.filename);
-          await fetchAudioData(location.state.data.filename);
+          const response = await axios.get(
+            `http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
+              location.state.data.filename
+            )}`
+          );
+          const audioBlob = new Blob([response.data], { type: "audio/*" });
+          const audioUrl = URL.createObjectURL(audioBlob);
+          setAudioData(audioUrl);
         }
       }
     };
@@ -40,7 +56,7 @@ const ScriptDisplay = () => {
     fetchData();
   }, [location.state]);
 
-  const fetchAudioData = async (filename) => {
+  /*const fetchAudioData = async (filename) => {
     try {
       if (filename) {
         const response = await fetch(
@@ -60,13 +76,18 @@ const ScriptDisplay = () => {
 
         setBufferString(audioDataString);
         const blob = new Blob([data]);
-        setAudioData(blob);*/
+        setAudioData(blob);
         setLoading(false);
       }
     } catch (error) {
       setError(error);
       setLoading(false);
     }
+  };*/
+
+  const handlePlay = () => {
+    const tmp = new Audio(audioData); //passing your state (hook)
+    tmp.play(); //simple play of an audio element.
   };
 
   const getContents = async (fileID) => {
@@ -182,6 +203,7 @@ const ScriptDisplay = () => {
           Your browser does not support the audio element.
         </audio>*/
       )}
+      <button onClick={handlePlay}>Play Audio</button>
       <p>script: {Content.scripts}</p>
       <div className="file-actions">
         <button
