@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AppContext } from "../AppContext.js";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./styles/folderContents.css";
+import "./styles/HomeScreen.css";
 
 const FilesInFolder = () => {
   const navigate = useNavigate();
@@ -189,7 +189,7 @@ const FilesInFolder = () => {
           >
             <div className="folder-icon img">
               <img
-                src="/images/folder-icon.png"
+                src="/images/file-icon.png"
                 alt="폴더 아이콘"
                 style={{ width: "20px", height: "20px" }}
               />
