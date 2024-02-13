@@ -90,7 +90,9 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
   const customName = req.body.customFileName;
   const sameName = await collection.find({ filename: customName }).toArray();
   if (sameName.length > 0) {
-    return res.send(["이미 있는 이름입니다. 다른 이름을 지어주세요!"]);
+    return res.json({
+      message: "이미 있는 이름입니다. 다른 이름을 지어주세요!",
+    });
   }
   try {
     if (!req.file) {
@@ -112,31 +114,6 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
 
     //const extension = path.extname(req.file.originalname);
     //const mimeType = mime.getType(extension);
-
-    ffmpeg.ffprobe(copy_path, (err, metadata) => {
-      if (err) {
-        console.error("Error analyzing file:", err);
-        return;
-      }
-
-      try {
-        const audioStream = metadata.streams.find(
-          (stream) => stream.codec_type === "audio"
-        );
-        if (!audioStream) {
-          throw new Error("No audio stream found in the file");
-        }
-
-        const numChannels = audioStream.channels;
-        const sampleRate = audioStream.sample_rate;
-
-        console.log("Number of Channels:", numChannels);
-        console.log("Sample Rate:", sampleRate);
-      } catch (error) {
-        console.error("Error extracting metadata:", error);
-      }
-    });
-
     const linear16FilePath = await convertToLinear16(copy_path);
     // 파일이 업로드된 후의 처리
     const fileDetails = {
@@ -144,7 +121,6 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       filename: customName,
       content: fs.readFileSync(linear16FilePath), //req.file.buffer, // 바이너리 데이터로 저장
       mimeType: "audio/wav", //mimeType,
-      numChannels: numChannels,
       sampleRate: wav.decode(linear16FilePath).sampleRate, //sampleRate,
       scripts: text_result,
       summary: summary_result,
@@ -411,7 +387,6 @@ app.get("/contents", async (req, res) => {
       filename: 0,
       content: 1,
       mimeType: 1,
-      numChannels: 1,
       sampleRate: 1,
       scripts: 1,
       summary: 1,

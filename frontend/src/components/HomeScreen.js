@@ -21,6 +21,7 @@ const HomeScreen = () => {
   const [customFileName, setCustomFileName] = useState("");
   const [selectedFolder, setSelectedFolder] = useState("");
   const [errorInFolder, setErrorInFolder] = useState("");
+  const [messageFromUpload, setMessageFromUpload] = useState("");
   const [Folders, setFoldersList] = useState([]);
   const [isLoadingPopupOpen, setLoadingPopupOpen] = useState(false);
 
@@ -84,6 +85,7 @@ const HomeScreen = () => {
       });
 
       const data = await response.json();
+      setMessageFromUpload(data.message);
       console.log(data.message); // 서버로부터 받은 응답 메시지 출력
       setLoading(false);
       setComplete(true);
@@ -128,7 +130,7 @@ const HomeScreen = () => {
       //const data = await response.json();
     } catch (error) {
       console.error("Error uploading file:", error);
-      }
+    }
   };
 
   const handleItemClick = (item) => {
@@ -272,7 +274,7 @@ const HomeScreen = () => {
             업로드
           </button>
           {loading && <p>업로드 중입니다. 잠시만 기다려주세요.</p>}
-          {complete && <p>업로드 완료!</p>}
+          {complete && <p>{messageFromUpload}</p>}
         </div>
       )}
 
@@ -302,9 +304,11 @@ const HomeScreen = () => {
           <div className="loading-container">
             {loading && <p>업로드 중입니다. 잠시만 기다려주세요.</p>}
             {complete && <p>업로드 완료!</p>}
-            {complete && <button className="loading-button" onClick={loadingClose}>
-              확인
-            </button>}
+            {complete && (
+              <button className="loading-button" onClick={loadingClose}>
+                확인
+              </button>
+            )}
           </div>
           {errorInFolder}
         </div>
@@ -316,9 +320,14 @@ const HomeScreen = () => {
           <div className="loading-container">
             {loading && <p>업로드 중입니다. 잠시만 기다려주세요.</p>}
             {complete && <p>업로드 완료!</p>}
-            {complete && <button className="loading-button" onClick={() => setComplete(false)}>
-              확인
-            </button>}
+            {complete && (
+              <button
+                className="loading-button"
+                onClick={() => setComplete(false)}
+              >
+                확인
+              </button>
+            )}
           </div>
           {errorInFolder}
         </div>
