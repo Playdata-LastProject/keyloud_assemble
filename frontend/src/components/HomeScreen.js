@@ -7,13 +7,14 @@ import { useNavigate } from "react-router-dom";
 
 const HomeScreen = () => {
   const navigate = useNavigate();
-  const { uploadedFiles, addFolder, setUploadedFiles } = useContext(AppContext);
+  const { uploadedFiles, addFolder, setUploadedFiles, loading, complete, isLoadingPopupOpen, updateLoadingPopupOpen, updateComplete, updateLoading } = useContext(AppContext);
+  //const [loading, setLoading] = useState(false);
+  //const [complete, setComplete] = useState(false);
+  //const [isLoadingPopupOpen, setLoadingPopupOpen] = useState(false);
   const [isUploadMenuOpen, setUploadMenuOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isRenamePopupOpen, setRenamePopupOpen] = useState(false);
   const [newName, setNewName] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [complete, setComplete] = useState(false);
   const [isCreateFolderPopupOpen, setCreateFolderPopupOpen] = useState(true);
   const [newFolderName, setNewFolderName] = useState("");
   const [isFileUploadPopupOpen, setFileUploadPopupOpen] = useState();
@@ -23,7 +24,7 @@ const HomeScreen = () => {
   const [errorInFolder, setErrorInFolder] = useState("");
   const [messageFromUpload, setMessageFromUpload] = useState("");
   const [Folders, setFoldersList] = useState([]);
-  const [isLoadingPopupOpen, setLoadingPopupOpen] = useState(false);
+
 
   useEffect(() => {
     fetchData(); // fetchData 함수 호출
@@ -50,7 +51,8 @@ const HomeScreen = () => {
   const handleFileUploadButtonClick = async () => {
     try {
       setFileUploadPopupOpen(true);
-      setComplete(false);
+      //setComplete(false);
+      updateComplete(false);
       //handleUpload();
     } catch (error) {
       console.error("Error:", error);
@@ -65,8 +67,10 @@ const HomeScreen = () => {
 
   // 업로드 버튼 클릭 시
   const handleUpload = async () => {
-    setLoadingPopupOpen(true);
-    setLoading(true);
+    updateLoadingPopupOpen(true);
+    updateLoading(true);
+    //setLoadingPopupOpen(true);
+    //setLoading(true);
     close();
     try {
       if (!selectedFile) {
@@ -87,9 +91,12 @@ const HomeScreen = () => {
       const data = await response.json();
       setMessageFromUpload(data.message);
       console.log(data.message); // 서버로부터 받은 응답 메시지 출력
-      setLoading(false);
-      setComplete(true);
-      setLoadingPopupOpen(false);
+      updateLoading(false);
+      updateComplete(true);
+      updateLoadingPopupOpen(false);
+      //setLoading(false);
+      //setComplete(true);
+      //setLoadingPopupOpen(false);
     } catch (error) {
       console.error("Error uploading file:", error);
     }
@@ -162,10 +169,6 @@ const HomeScreen = () => {
   const close = () => {
     setFileUploadPopupOpen(false);
     setCreateFolderPopupOpen(false);
-  };
-
-  const loadingClose = () => {
-    setLoadingPopupOpen(false);
   };
 
   return (
@@ -291,45 +294,6 @@ const HomeScreen = () => {
           <button onClick={handleRename}>이름 변경</button>
           {/* 수정: handleMoveToTrash 함수 호출로 변경 */}
           <button onClick={handleMoveToTrash}>휴지통으로 이동</button>
-        </div>
-      )}
-
-      {/* 로딩 팝업 */}
-      {isLoadingPopupOpen && (
-        <div className="loading-popup">
-          <button class="close-button" onClick={loadingClose}>
-            {" "}
-            X{" "}
-          </button>
-          <div className="loading-container">
-            {loading && <p>업로드 중입니다. 잠시만 기다려주세요.</p>}
-            {complete && <p>업로드 완료!</p>}
-            {complete && (
-              <button className="loading-button" onClick={loadingClose}>
-                확인
-              </button>
-            )}
-          </div>
-          {errorInFolder}
-        </div>
-      )}
-
-      {/* 로딩 완료 팝업 */}
-      {complete && (
-        <div className="loading-popup">
-          <div className="loading-container">
-            {loading && <p>업로드 중입니다. 잠시만 기다려주세요.</p>}
-            {complete && <p>업로드 완료!</p>}
-            {complete && (
-              <button
-                className="loading-button"
-                onClick={() => setComplete(false)}
-              >
-                확인
-              </button>
-            )}
-          </div>
-          {errorInFolder}
         </div>
       )}
     </div>

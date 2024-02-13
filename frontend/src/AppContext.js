@@ -7,6 +7,21 @@ export const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   const [uploadedFiles, setUploadedFiles] = useState({});
   const [folders, setFolders] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [complete, setComplete] = useState(false);
+  const [isLoadingPopupOpen, setLoadingPopupOpen] = useState(false);
+
+  const updateLoading = (newState) => {
+    setLoading(newState);
+  };
+
+  const updateComplete = (newState) => {
+    setComplete(newState);
+  };
+
+  const updateLoadingPopupOpen = (newState) => {
+    setLoadingPopupOpen(newState);
+  };
 
   const addFileToFolder = (folderName, file) => {
     const updatedFiles = { ...uploadedFiles };
@@ -26,6 +41,12 @@ export const AppProvider = ({ children }) => {
     addFileToFolder,
     addFolder,
     folders,
+    loading,
+    updateLoading,
+    complete,
+    updateComplete,
+    isLoadingPopupOpen,
+    updateLoadingPopupOpen
   };
 
   useEffect(() => {
