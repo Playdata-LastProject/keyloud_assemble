@@ -166,11 +166,11 @@ const HomeScreen = () => {
           className="folder-content"
           onClick={() => handleFolderIconClick(folder)}
         >
-          <div className="folder-icon img">
+          <div className="folder-icon">
             <img
-              src="/images/folder-icon.png"
+              src="/images/folder2.ico"
               alt="폴더 아이콘"
-              style={{ width: "20px", height: "20px" }}
+              style={{ width: "45px", height: "40px" }}
             />
           </div>
           <div className="folder-name">{folder}</div>

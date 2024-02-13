@@ -10,14 +10,14 @@
   padding: 20px;
 }
 
-.folder-icon img {
-  border-radius: 5px;
-  margin-right: 10px;
-}
-
 .folder-icon {
-  width: 30px;
-  height: 30px;
+  background-color: #7559df;
+  border-radius: 50%;
+  overflow: hidden;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
   margin-right: 10px;
 }
 
