@@ -72,7 +72,7 @@ app.get("/listUpFiles", async (req, res) => {
 
 async function convertToLinear16(audioPath) {
   return new Promise((resolve, reject) => {
-    const linear16FilePath = audioPath.replace(/\.[^/.]+$/, "_linear16.wav");
+    const linear16FilePath = audioPath.replace(/\.[^/.]+$/, "_linear16_2.wav");
 
     ffmpeg()
       .input(audioPath)
@@ -110,8 +110,8 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
 
     const timestamp_result = s2t_result[1];
 
-    const extension = path.extname(req.file.originalname);
-    const mimeType = mime.getType(extension);
+    //const extension = path.extname(req.file.originalname);
+    //const mimeType = mime.getType(extension);
 
     ffmpeg.ffprobe(copy_path, (err, metadata) => {
       if (err) {
@@ -143,7 +143,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       folderName: req.body.selectedFolder,
       filename: customName,
       content: fs.readFileSync(linear16FilePath), //req.file.buffer, // 바이너리 데이터로 저장
-      mimeType: mimeType,
+      mimeType: "audio/wav", //mimeType,
       numChannels: numChannels,
       sampleRate: wav.decode(linear16FilePath).sampleRate, //sampleRate,
       scripts: text_result,
@@ -214,7 +214,7 @@ app.post("/update_summary", async (req, res) => {
     }
   } catch (error) {
     console.error("Error during update:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    return res.send(["알 수 없는 오류 발생!"]);
   }
 });
 
