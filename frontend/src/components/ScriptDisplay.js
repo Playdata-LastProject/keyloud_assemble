@@ -4,7 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 //import AudioPlayer from "react-audio-player";
 import "./styles/ScriptDisplay.css";
-import AudioPlayer from "react-audio-player";
+import ReactAudioPlayer from "react-audio-player";
 
 const ScriptDisplay = () => {
   const location = useLocation();
@@ -19,7 +19,7 @@ const ScriptDisplay = () => {
   const [audioData, setAudioData] = useState(null);
   const [audioStream, setAudioStream] = useState("");
   const [bufferString, setBufferString] = useState("");
-  const [audioUrl, setAudioUrl] = useState("");
+  const [audioUrl, setAudioUrl] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -193,7 +193,7 @@ const ScriptDisplay = () => {
         <div>No audio data available</div>
       ) : (
         //<button onClick={handlePlay}>Play Audio</button>
-        <AudioPlayer src={audioUrl} autoPlay controls />
+        <ReactAudioPlayer src={audioUrl} autoPlay controls />
       )}
       <p>script: {Content.scripts}</p>
       <div className="file-actions">
