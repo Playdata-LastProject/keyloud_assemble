@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 //import AudioPlayer from "react-audio-player";
 import AudioPlayer from "react-audio-player";
 
@@ -87,9 +87,18 @@ const ScriptDisplay = () => {
   };*/
 
   const handlePlay = () => {
-    const tmp = new Audio(); //new Audio(audioData); //passing your state (hook)
+    //const tmp = new Audio(audioData); //passing your state (hook)
+    //tmp.srcObject = audioStream;
+    //tmp.play(); //simple play of an audio element.
+
+    if (!audioStream) {
+      console.error("Audio stream not available yet");
+      return;
+    }
+
+    const tmp = new Audio();
     tmp.srcObject = audioStream;
-    tmp.play(); //simple play of an audio element.
+    tmp.play();
   };
 
   const getContents = async (fileID) => {
