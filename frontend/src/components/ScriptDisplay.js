@@ -80,7 +80,7 @@ const ScriptDisplay = () => {
 
     if (audioData && Content) {
       const bytesPerSample = 2; // 16비트 = 2바이트
-      const sampleRate = 44100; // 샘플 레이트 설정
+      const sampleRate = Content.sampleRate; // 샘플 레이트 설정
 
       const audioContext = new AudioContext();
       const audioBuffer = audioContext.createBuffer(
