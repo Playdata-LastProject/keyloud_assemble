@@ -22,6 +22,7 @@ const HomeScreen = () => {
   const [selectedFolder, setSelectedFolder] = useState("");
   const [errorInFolder, setErrorInFolder] = useState("");
   const [Folders, setFoldersList] = useState([]);
+  const [isLoadingPopupOpen, setLoadingPopupOpen] = useState(false);
 
   useEffect(() => {
     fetchData(); // fetchData 함수 호출
@@ -63,7 +64,9 @@ const HomeScreen = () => {
 
   // 업로드 버튼 클릭 시
   const handleUpload = async () => {
+    setLoadingPopupOpen(true);
     setLoading(true);
+    close();
     try {
       if (!selectedFile) {
         console.error("No file selected");
@@ -84,6 +87,7 @@ const HomeScreen = () => {
       console.log(data.message); // 서버로부터 받은 응답 메시지 출력
       setLoading(false);
       setComplete(true);
+      setLoadingPopupOpen(false);
     } catch (error) {
       console.error("Error uploading file:", error);
     }
@@ -156,6 +160,10 @@ const HomeScreen = () => {
   const close = () => {
     setFileUploadPopupOpen(false);
     setCreateFolderPopupOpen(false);
+  };
+
+  const loadingClose = () => {
+    setLoadingPopupOpen(false);
   };
 
   return (
@@ -281,6 +289,38 @@ const HomeScreen = () => {
           <button onClick={handleRename}>이름 변경</button>
           {/* 수정: handleMoveToTrash 함수 호출로 변경 */}
           <button onClick={handleMoveToTrash}>휴지통으로 이동</button>
+        </div>
+      )}
+
+      {/* 로딩 팝업 */}
+      {isLoadingPopupOpen && (
+        <div className="loading-popup">
+          <button class="close-button" onClick={loadingClose}>
+            {" "}
+            X{" "}
+          </button>
+          <div className="loading-container">
+            {loading && <p>업로드 중입니다. 잠시만 기다려주세요.</p>}
+            {complete && <p>업로드 완료!</p>}
+            {complete && <button className="loading-button" onClick={loadingClose}>
+              확인
+            </button>}
+          </div>
+          {errorInFolder}
+        </div>
+      )}
+
+      {/* 로딩 완료 팝업 */}
+      {complete && (
+        <div className="loading-popup">
+          <div className="loading-container">
+            {loading && <p>업로드 중입니다. 잠시만 기다려주세요.</p>}
+            {complete && <p>업로드 완료!</p>}
+            {complete && <button className="loading-button" onClick={() => setComplete(false)}>
+              확인
+            </button>}
+          </div>
+          {errorInFolder}
         </div>
       )}
     </div>
