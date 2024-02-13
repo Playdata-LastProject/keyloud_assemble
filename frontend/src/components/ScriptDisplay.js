@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import "./styles/ScriptDisplay.css";
 import AudioPlayer from "react-audio-player";
 
-
 const ScriptDisplay = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -24,37 +23,21 @@ const ScriptDisplay = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (location.state) {
-        if (location.state.type < 4) {
-          setReceivedData(location.state.data);
-          setType(location.state.type);
-          setLoading(false);
-          await getContents(location.state.data.filename);
-          const response = await axios.get(
-            `http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
-              location.state.data.filename
-            )}`
-          );
-          const audioBlob = new Blob([response.data], { type: "audio/*" });
-          const stream = await audioBlob.stream();
-          setAudioStream(stream);
-          const audioUrl = URL.createObjectURL(audioBlob);
-          setAudioData(audioUrl);
-        } else {
-          setReceivedData(location.state.data);
-          setType(location.state.type);
-          setLoading(false);
-          await getContents(location.state.data.filename);
-          const response = await axios.get(
-            `http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
-              location.state.data.filename
-            )}`
-          );
-          const audioBlob = new Blob([response.data], { type: "audio/*" });
-          const stream = await audioBlob.stream();
-          setAudioStream(stream);
-          const audioUrl = URL.createObjectURL(audioBlob);
-          setAudioData(audioUrl);
-        }
+        setReceivedData(location.state.data);
+        setType(location.state.type);
+        setLoading(false);
+        await getContents(location.state.data.filename);
+        const response = await axios.get(
+          `http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
+            location.state.data.filename
+          )}`
+        );
+        setAudioData(response.data);
+        /*const audioBlob = new Blob([response.data], { type: "audio/*" });
+        const stream = await audioBlob.stream();
+        setAudioStream(stream);
+        const audioUrl = URL.createObjectURL(audioBlob);
+        setAudioData(audioUrl);*/
       }
     };
 
@@ -95,14 +78,15 @@ const ScriptDisplay = () => {
     //tmp.srcObject = audioStream;
     //tmp.play(); //simple play of an audio element.
 
-    if (!audioStream) {
-      console.error("Audio stream not available yet");
-      return;
+    if (audioData) {
+      const audioContext = new AudioContext();
+      const audioBuffer = audioContext.createBuffer(1, audioData.length, 44100);
+      const audioSource = audioContext.createBufferSource();
+      audioBuffer.copyToChannel(audioData, 0);
+      audioSource.buffer = audioBuffer;
+      audioSource.connect(audioContext.destination);
+      audioSource.start();
     }
-
-    const tmp = new Audio();
-    tmp.srcObject = audioStream;
-    tmp.play();
   };
 
   const getContents = async (fileID) => {
@@ -206,17 +190,7 @@ const ScriptDisplay = () => {
         // 오디오 데이터가 존재하지 않는 경우의 처리
         <div>No audio data available</div>
       ) : (
-        <audio controls src={audioData}>
-          Your browser does not support the audio element.
-        </audio>
-        // 오디오 데이터가 존재하는 경우
-        /*<audio controls>
-          <source
-            src={URL.createObjectURL(audioData)}
-            type={Content.mimeType}
-          />
-          Your browser does not support the audio element.
-        </audio>*/
+        <button onClick={handlePlay}>Play Audio</button>
       )}
       <button onClick={handlePlay}>Play Audio</button>
       <p>script: {Content.scripts}</p>
