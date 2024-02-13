@@ -40,24 +40,28 @@ const ScriptDisplay = () => {
   }, [location.state]);
 
   const handlePlay = () => {
-
     if (audioData && Content) {
-      const bytesPerSample = 2; // 16비트 = 2바이트
-      const sampleRate = 44100; // 샘플 레이트 설정
+      const bytesPerSample = Content.bytesPerSample; // 16비트 = 2바이트
+      const sampleRate = Content.sampleRate; // 샘플 레이트 설정
 
       const audioContext = new AudioContext();
       const audioBuffer = audioContext.createBuffer(
         1,
-        audioData.length / bytesPerSample,
+        audioData.length / bytesPerSample / Content.channels,
         sampleRate
       );
       const audioSource = audioContext.createBufferSource();
       const channelData = audioBuffer.getChannelData(0);
 
-      for (let i = 0; i < audioData.length; i += bytesPerSample) {
+      for (
+        let i = 0;
+        i < audioData.length;
+        i += bytesPerSample * Content.channels
+      ) {
         // 16비트 정수 값을 -1과 1 사이의 부동소수점 값으로 변환
         const int16Value = (audioData[i + 1] << 8) | (audioData[i] & 0xff);
-        channelData[i / bytesPerSample] = int16Value / 32768.0; // 정규화
+        channelData[i / bytesPerSample / Content.channels] =
+          int16Value / 32768.0; // 정규화
       }
       audioSource.buffer = audioBuffer;
       audioSource.connect(audioContext.destination);
