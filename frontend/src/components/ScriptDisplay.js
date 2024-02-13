@@ -16,7 +16,7 @@ const ScriptDisplay = () => {
   const [Content, setContents] = useState({});
   const [error, setError] = useState(null);
   const [splitedScript, spliting] = useState([]);
-  const [audioData, setAudioData] = useState("");
+  const [audioData, setAudioData] = useState(null);
   const [audioStream, setAudioStream] = useState("");
   const [bufferString, setBufferString] = useState("");
 
@@ -192,7 +192,6 @@ const ScriptDisplay = () => {
       ) : (
         <button onClick={handlePlay}>Play Audio</button>
       )}
-      <button onClick={handlePlay}>Play Audio</button>
       <p>script: {Content.scripts}</p>
       <div className="file-actions">
         <button
