@@ -59,17 +59,18 @@ function TrashScreen() {
 
   return (
     <div className="trash-screen">
-      <h1>휴지통</h1>
-      <ul>
-        {items.map(item => (
-          <li key={item}>{item}</li>
-        ))}
-      </ul>
+      <h1>Trash Can</h1>
       {items.length > 0 && (
         <button onClick={emptyTrash} className="empty-button">
           휴지통 비우기
         </button>
       )}
+      <ul>
+        {items.map(item => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+      
     </div>
   );
 }
