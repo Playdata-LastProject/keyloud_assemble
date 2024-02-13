@@ -51,6 +51,7 @@ const ScriptDisplay = () => {
         sampleRate
       );
       const audioSource = audioContext.createBufferSource();
+      audioSource.buffer = audioBuffer;
       const channelData = audioBuffer.getChannelData(0);
 
       for (
@@ -63,7 +64,6 @@ const ScriptDisplay = () => {
         channelData[i / bytesPerSample / Content.channels] =
           int16Value / 32768.0; // 정규화
       }
-      audioSource.buffer = audioBuffer;
       audioSource.connect(audioContext.destination);
       audioSource.start();
     }
