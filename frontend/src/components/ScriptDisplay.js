@@ -193,7 +193,7 @@ const ScriptDisplay = () => {
         <div>No audio data available</div>
       ) : (
         //<button onClick={handlePlay}>Play Audio</button>
-        <ReactAudioPlayer src={audioUrl} autoPlay controls />
+        <AudioPlayer src={audioUrl} autoPlay controls />
       )}
       <p>script: {Content.scripts}</p>
       <div className="file-actions">
