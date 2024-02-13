@@ -39,33 +39,44 @@ const ScriptDisplay = () => {
     fetchData();
   }, [location.state]);
 
-  const handlePlay = () => {
+  const handlePlay = async () => {
     if (audioData && Content) {
       const bytesPerSample = Content.bytesPerSample; // 16비트 = 2바이트
       const sampleRate = Content.sampleRate; // 샘플 레이트 설정
+      const channels = Content.channels; // 채널 수
 
       const audioContext = new AudioContext();
-      const audioBuffer = audioContext.createBuffer(
-        1,
-        audioData.length / bytesPerSample / Content.channels,
-        sampleRate
-      );
       const audioSource = audioContext.createBufferSource();
-      audioSource.buffer = audioBuffer;
-      const channelData = audioBuffer.getChannelData(0);
 
-      for (
-        let i = 0;
-        i < audioData.length;
-        i += bytesPerSample * Content.channels
-      ) {
-        // 16비트 정수 값을 -1과 1 사이의 부동소수점 값으로 변환
-        const int16Value = (audioData[i + 1] << 8) | (audioData[i] & 0xff);
-        channelData[i / bytesPerSample / Content.channels] =
-          int16Value / 32768.0; // 정규화
+      for (let i = 0; i < audioData.length; i += bytesPerSample * channels) {
+        const chunk = audioData.subarray(i, i + bytesPerSample * channels);
+        const audioBuffer = audioContext.createBuffer(
+          channels,
+          chunk.length / channels,
+          sampleRate
+        );
+        const channelData = [];
+        for (let c = 0; c < channels; c++) {
+          channelData.push(audioBuffer.getChannelData(c));
+        }
+
+        for (let j = 0; j < chunk.length; j += bytesPerSample * channels) {
+          for (let c = 0; c < channels; c++) {
+            const int16Value =
+              (chunk[j + c * bytesPerSample + 1] << 8) |
+              (chunk[j + c * bytesPerSample] & 0xff);
+            channelData[c][j / bytesPerSample / channels] =
+              int16Value / 32768.0; // 정규화
+          }
+        }
+        audioBuffer.copyToChannel(channelData[0], 0);
+        if (channels === 2) {
+          audioBuffer.copyToChannel(channelData[1], 1);
+        }
+        audioSource.buffer = audioBuffer;
+        audioSource.connect(audioContext.destination);
+        await audioSource.start();
       }
-      audioSource.connect(audioContext.destination);
-      audioSource.start();
     }
   };
 
