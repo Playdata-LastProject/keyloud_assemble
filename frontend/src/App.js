@@ -18,6 +18,7 @@ const App = () => {
   return (
     <Router>
       <AppProvider>
+        <body>
         <div className="app-container">
           {/* 헤더는 위쪽에 위치 */}
           <div className="header-container">
@@ -47,6 +48,7 @@ const App = () => {
             </div>
           </div>
         </div>
+        </body>
       </AppProvider>
     </Router>
   );

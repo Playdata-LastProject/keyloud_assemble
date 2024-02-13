@@ -21,7 +21,7 @@ const Header = () => {
           placeholder="전체검색창(빠른검색)"
           className="search-input"
         />
-        <button>검색</button>
+        <button className="search-all-button">검색</button>
       </div>
 
       {/* 로그인 버튼, 달력 버튼, 설정 버튼 */}

@@ -34,13 +34,13 @@
   }
 }
 
-.body {
-  background-color: #ffffff;
-  color : #692498;
+body {
+  background-color: black;
+  color : #d9d9d9;
 }
 
 .button {
-  color: #692498;
+  color: #7559df;
 }
 
 .app-container {
@@ -57,8 +57,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px;
-  background: #f0f0f0;
-  border-bottom: 2px solid purple;
+  background: black;
+  border-bottom: 2px solid #7559df;
   left: 0;
   right: 0;
   z-index: 2;
@@ -76,7 +76,7 @@
 
 .left-menu {
   width: 220px; /* 메뉴의 고정 너비 설정 */
-  background-color: #f2f2f2; /* 메뉴의 배경색 설정 */
+  background-color: black; /* 메뉴의 배경색 설정 */
   position: fixed;
   left: 0;
   top: 60px;
@@ -84,7 +84,7 @@
   height: 85%;
   padding: 10px;
   z-index: 1;
-  border-right: 2px solid #692498;
+  border-right: 2px solid #7559df;
   margin-top: 10px;
 }
 

@@ -3,6 +3,7 @@ import axios from "axios";
 import "./styles/HomeScreen.css";
 import { AppContext } from "../AppContext.js";
 import { useNavigate, useLocation } from "react-router-dom";
+import "./styles/folderContents.css";
 
 const FilesInFolder = () => {
   const navigate = useNavigate();
