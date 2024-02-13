@@ -12,12 +12,24 @@ const LeftMenu = ({ onTrashPage }) => {
         }}
         className="menu-link"
       >
-        키워드 검색
+        <div className="menu-item">
+          <img
+            src="/images/search.ico"
+            alt="키워드 아이콘"
+            className="search-icon"
+          />
+          키워드 검색
+        </div>
       </Link>
       <div style={{ marginTop: "20px" }}>
         <Link to="/trash"
         className="menu-link"
-        >휴지통</Link>
+        >
+          <div className="menu-item">
+            <img src="/images/trash.ico" alt="휴지통 아이콘" className="trash-icon" />
+            휴지통
+          </div>
+        </Link>
       </div>
     </div>
   );
