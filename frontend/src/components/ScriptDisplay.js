@@ -4,7 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 //import AudioPlayer from "react-audio-player";
 import "./styles/ScriptDisplay.css";
-import ReactAudioPlayer from "react-audio-player";
+import AudioPlayer from "react-audio-player";
 
 const ScriptDisplay = () => {
   const location = useLocation();
@@ -16,10 +16,9 @@ const ScriptDisplay = () => {
   const [Content, setContents] = useState({});
   const [error, setError] = useState(null);
   const [splitedScript, spliting] = useState([]);
-  const [audioData, setAudioData] = useState(null);
+  const [audioData, setAudioData] = useState("");
   const [audioStream, setAudioStream] = useState("");
   const [bufferString, setBufferString] = useState("");
-  const [audioUrl, setAudioUrl] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,14 +78,18 @@ const ScriptDisplay = () => {
     //tmp.srcObject = audioStream;
     //tmp.play(); //simple play of an audio element.
 
-    if (audioData && Content.mimeType) {
-      const audioBlob = new Blob([audioData], { type: Content.mimeType });
-      const audioUrl = URL.createObjectURL(audioBlob);
-      setAudioUrl(audioUrl);
-      //const audio = new Audio(audioUrl);
-      //audio.play();
-    } else {
-      console.error("Audio data not available");
+    if (audioData && Content) {
+      const audioContext = new AudioContext();
+      const audioBuffer = audioContext.createBuffer(
+        Content.numChannels,
+        audioData.length,
+        Content.sampleRate
+      );
+      const audioSource = audioContext.createBufferSource();
+      audioBuffer.copyToChannel(audioData, 0);
+      audioSource.buffer = audioBuffer;
+      audioSource.connect(audioContext.destination);
+      audioSource.start();
     }
   };
 
@@ -187,13 +190,11 @@ const ScriptDisplay = () => {
       <p>file name: {receivedData.filename}</p>
       <p>MIME TYPE: {Content.mimeType}</p>
       <p>content: {bufferString}</p>
-      <button onClick={handlePlay}>Bring audio</button>
       {!receivedData.filename ? ( //audioData ? (
         // 오디오 데이터가 존재하지 않는 경우의 처리
         <div>No audio data available</div>
       ) : (
-        //<button onClick={handlePlay}>Play Audio</button>
-        <ReactAudioPlayer src={audioUrl} autoPlay controls />
+        <button onClick={handlePlay}>Play Audio</button>
       )}
       <p>script: {Content.scripts}</p>
       <div className="file-actions">
