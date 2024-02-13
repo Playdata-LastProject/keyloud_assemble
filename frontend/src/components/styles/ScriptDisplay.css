@@ -1,0 +1,14 @@
+.edit-button, .delete-button{
+    background-color: black;
+    color: white;
+    border: solid #7559df 1px;
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    margin-right: 10px;
+}
+
+.edit-button:hover, .delete-button:hover{
+    background-color: #573dab; 
+}
