@@ -12,6 +12,7 @@ const ScriptDisplay = () => {
   const [error, setError] = useState(null);
   const [splitedScript, spliting] = useState([]);
   const [audioData, setAudioData] = useState("");
+  const [audioStream, setAudioStream] = useState("");
   const [bufferString, setBufferString] = useState("");
 
   useEffect(() => {
@@ -41,6 +42,8 @@ const ScriptDisplay = () => {
             )}`
           );
           const audioBlob = new Blob([response.data], { type: "audio/*" });
+          const stream = await audioBlob.stream();
+          setAudioStream(stream);
           const audioUrl = URL.createObjectURL(audioBlob);
           setAudioData(audioUrl);
         }
@@ -80,7 +83,8 @@ const ScriptDisplay = () => {
   };*/
 
   const handlePlay = () => {
-    const tmp = new Audio(audioData); //passing your state (hook)
+    const tmp = new Audio(); //new Audio(audioData); //passing your state (hook)
+    tmp.srcObject = audioStream;
     tmp.play(); //simple play of an audio element.
   };
 
