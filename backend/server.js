@@ -121,7 +121,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       filename: customName,
       content: fs.readFileSync(linear16FilePath), //req.file.buffer, // 바이너리 데이터로 저장
       mimeType: "audio/wav", //mimeType,
-      sampleRate: wav.decode(linear16FilePath).sampleRate, //sampleRate,
+      sampleRate: wav.decode(fs.readFileSync(linear16FilePath)).sampleRate, //sampleRate,
       scripts: text_result,
       summary: summary_result,
       keywords: keywords_result,
