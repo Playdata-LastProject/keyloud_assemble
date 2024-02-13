@@ -19,6 +19,7 @@ const ScriptDisplay = () => {
   const [audioData, setAudioData] = useState(null);
   const [audioStream, setAudioStream] = useState("");
   const [bufferString, setBufferString] = useState("");
+  const [audioUrl, setAudioUrl] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,8 +82,9 @@ const ScriptDisplay = () => {
     if (audioData && Content.mimeType) {
       const audioBlob = new Blob([audioData], { type: Content.mimeType });
       const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      audio.play();
+      setAudioUrl(audioUrl);
+      //const audio = new Audio(audioUrl);
+      //audio.play();
     } else {
       console.error("Audio data not available");
     }
@@ -185,11 +187,13 @@ const ScriptDisplay = () => {
       <p>file name: {receivedData.filename}</p>
       <p>MIME TYPE: {Content.mimeType}</p>
       <p>content: {bufferString}</p>
+      <button onClick={handlePlay}>Bring audio</button>
       {!receivedData.filename ? ( //audioData ? (
         // 오디오 데이터가 존재하지 않는 경우의 처리
         <div>No audio data available</div>
       ) : (
-        <button onClick={handlePlay}>Play Audio</button>
+        //<button onClick={handlePlay}>Play Audio</button>
+        <ReactAudioPlayer src={audioUrl} autoPlay controls />
       )}
       <p>script: {Content.scripts}</p>
       <div className="file-actions">
