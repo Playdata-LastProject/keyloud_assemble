@@ -2,8 +2,18 @@ import React from "react";
 import { Link } from "react-router-dom"; // Link 컴포넌트 추가
 import "../App.css";
 import "./styles/LeftMenu.css";
+import { AppContext } from "../AppContext.js";
+import { useContext } from "react";
 
 const LeftMenu = ({ onTrashPage }) => {
+
+  const { loading, complete, isLoadingPopupOpen, updateLoadingPopupOpen, updateComplete, updateLoading } = useContext(AppContext);
+
+  const loadingClose = () => {
+    updateLoadingPopupOpen(false);
+    //setLoadingPopupOpen(false);
+  };
+
   return (
     <div className="left-menu">
       <Link
@@ -31,6 +41,36 @@ const LeftMenu = ({ onTrashPage }) => {
           </div>
         </Link>
       </div>
+
+      {/* 로딩 팝업 */}
+      {isLoadingPopupOpen && (
+        <div className="loading-popup">
+          <button class="close-button" onClick={loadingClose}>
+            {" "}
+            X{" "}
+          </button>
+          <div className="loading-container">
+            {loading && <p>업로드 중입니다. 잠시만 기다려주세요.</p>}
+            {complete && <p>업로드 완료!</p>}
+            {complete && <button className="loading-button" onClick={loadingClose}>
+              확인
+            </button>}
+          </div>
+        </div>
+      )}
+
+      {/* 로딩 완료 팝업 */}
+      {complete && (
+        <div className="loading-popup">
+          <div className="loading-container">
+            {loading && <p>업로드 중입니다. 잠시만 기다려주세요.</p>}
+            {complete && <p>업로드 완료!</p>}
+            {complete && <button className="loading-button" onClick={() => updateComplete(false)}>
+              확인
+            </button>}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

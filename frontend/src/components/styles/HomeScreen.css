@@ -243,34 +243,3 @@
 .file-upload-button:hover{
   background-color: #573dab; 
 }
-
-.loading-popup{
-  color: #7559df;
-  position: fixed;
-  top: 90%;
-  left: 8%;
-  transform: translate(-50%, -50%);
-  background-color: lavender;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  z-index: 3;
-  padding-top: 0px;
-}
-
-.loading-popup button {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 10px;
-  background-color: #7559df;
-  color: #fff;
-  cursor: pointer;
-}
-
-.loading-button:hover{
-  background-color: #573dab; 
-}
-
-.loading-container{
-  width: 160px;
-}
