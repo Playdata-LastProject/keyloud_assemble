@@ -11,6 +11,8 @@ const synonyms = require("./synonyms");
 const { searchInScript, searchInKeywords } = require("./searching");
 const mime = require("mime");
 const path = require("path");
+const ffmpeg = require("fluent-ffmpeg");
+const fileType = require("file-type");
 
 const app = express();
 app.use(bodyParser.json());
@@ -95,12 +97,37 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
     const extension = path.extname(req.file.originalname);
     const mimeType = mime.getType(extension);
 
+    ffmpeg.ffprobe(copy_path, (err, metadata) => {
+      if (err) {
+        console.error("Error analyzing file:", err);
+        return;
+      }
+
+      try {
+        const audioStream = metadata.streams.find(
+          (stream) => stream.codec_type === "audio"
+        );
+        if (!audioStream) {
+          throw new Error("No audio stream found in the file");
+        }
+
+        const numChannels = audioStream.channels;
+        const sampleRate = audioStream.sample_rate;
+
+        console.log("Number of Channels:", numChannels);
+        console.log("Sample Rate:", sampleRate);
+      } catch (error) {
+        console.error("Error extracting metadata:", error);
+      }
+    });
     // 파일이 업로드된 후의 처리
     const fileDetails = {
       folderName: req.body.selectedFolder,
       filename: customName,
       content: fs.readFileSync(copy_path), //req.file.buffer, // 바이너리 데이터로 저장
       mimeType: mimeType,
+      numChannels: numChannels,
+      sampleRate: sampleRate,
       scripts: text_result,
       summary: summary_result,
       keywords: keywords_result,
@@ -366,6 +393,8 @@ app.get("/contents", async (req, res) => {
       filename: 0,
       content: 1,
       mimeType: 1,
+      numChannels: 1,
+      sampleRate: 1,
       scripts: 1,
       summary: 1,
       keywords: 0,
