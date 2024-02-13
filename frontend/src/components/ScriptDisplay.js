@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import {  useNavigate } from "react-router-dom";
 //import AudioPlayer from "react-audio-player";
 
 const ScriptDisplay = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true);
   const [type, setType] = useState(0);
   const [receivedData, setReceivedData] = useState({});
@@ -141,6 +144,12 @@ const ScriptDisplay = () => {
         .then((response) => {
           // Handle success response if needed
           console.log("File deletion success", response.data);
+
+          // 알림 추가
+          window.alert("파일이 성공적으로 삭제되었습니다."); // 삭제 성공 시 알림
+
+          // 파일 삭제 성공 시 뒤로 가기
+          navigate(-1);
         })
         .catch((error) => {
           // Handle error if needed
