@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-//import AudioPlayer from "react-audio-player";
+import AudioPlayer from "react-audio-player";
 
 const ScriptDisplay = () => {
   const location = useLocation();
@@ -63,6 +63,11 @@ const ScriptDisplay = () => {
       setError(error);
       setLoading(false);
     }
+  };
+
+  const handlePlay = () => {
+    const tmp = new Audio(audioData); //passing your state (hook)
+    tmp.play(); //simple play of an audio element.
   };
 
   const getContents = async (fileID) => {
@@ -172,6 +177,7 @@ const ScriptDisplay = () => {
           Your browser does not support the audio element.
         </audio>*/
       )}
+      <button onClick={handlePlay}>Play Audio</button>
       <p>script: {Content.scripts}</p>
       <div className="file-actions">
         <button
