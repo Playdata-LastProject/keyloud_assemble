@@ -12,6 +12,9 @@ const { searchInScript, searchInKeywords } = require("./searching");
 const mime = require("mime");
 const path = require("path");
 const ffmpeg = require("fluent-ffmpeg");
+const ffmpegPath = require("ffmpeg-static");
+ffmpeg.setFfmpegPath(ffmpegPath);
+const wav = require("node-wav");
 
 const app = express();
 app.use(bodyParser.json());
@@ -67,6 +70,20 @@ app.get("/listUpFiles", async (req, res) => {
   res.send(result);
 });
 
+async function convertToLinear16(audioPath) {
+  return new Promise((resolve, reject) => {
+    const linear16FilePath = audioPath.replace(/\.[^/.]+$/, "_linear16.wav");
+
+    ffmpeg()
+      .input(audioPath)
+      .audioCodec("pcm_s16le")
+      .toFormat("wav")
+      .on("end", () => resolve(linear16FilePath))
+      .on("error", (err) => reject(err))
+      .save(linear16FilePath);
+  });
+}
+
 // 파일 업로드 라우트
 app.post("/upload_files", multer().single("files"), async (req, res) => {
   const collection = conn.db.collection("files");
@@ -119,14 +136,16 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
         console.error("Error extracting metadata:", error);
       }
     });
+
+    const linear16FilePath = await convertToLinear16(copy_path);
     // 파일이 업로드된 후의 처리
     const fileDetails = {
       folderName: req.body.selectedFolder,
       filename: customName,
-      content: fs.readFileSync(copy_path), //req.file.buffer, // 바이너리 데이터로 저장
+      content: fs.readFileSync(linear16FilePath), //req.file.buffer, // 바이너리 데이터로 저장
       mimeType: mimeType,
       numChannels: numChannels,
-      sampleRate: sampleRate,
+      sampleRate: wav.decode(audioFile).sampleRate, //sampleRate,
       scripts: text_result,
       summary: summary_result,
       keywords: keywords_result,

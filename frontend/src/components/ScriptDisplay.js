@@ -33,50 +33,13 @@ const ScriptDisplay = () => {
           )}`
         );
         setAudioData(response.data);
-        /*const audioBlob = new Blob([response.data], { type: "audio/*" });
-        const stream = await audioBlob.stream();
-        setAudioStream(stream);
-        const audioUrl = URL.createObjectURL(audioBlob);
-        setAudioData(audioUrl);*/
       }
     };
 
     fetchData();
   }, [location.state]);
 
-  /*const fetchAudioData = async (filename) => {
-    try {
-      if (filename) {
-        const response = await fetch(
-          `http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
-            filename
-          )}`
-        );
-
-        const audioBlob = new Blob([response.data], { type: "audio/*" });
-        const audioUrl = URL.createObjectURL(audioBlob);
-        setAudioData(audioUrl);
-
-        /*const data = await response.arrayBuffer();
-
-        const textDecoder = new TextDecoder();
-        const audioDataString = textDecoder.decode(response);
-
-        setBufferString(audioDataString);
-        const blob = new Blob([data]);
-        setAudioData(blob);
-        setLoading(false);
-      }
-    } catch (error) {
-      setError(error);
-      setLoading(false);
-    }
-  };*/
-
   const handlePlay = () => {
-    //const tmp = new Audio(audioData); //passing your state (hook)
-    //tmp.srcObject = audioStream;
-    //tmp.play(); //simple play of an audio element.
 
     if (audioData && Content) {
       const bytesPerSample = 2; // 16비트 = 2바이트
