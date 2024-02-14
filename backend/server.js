@@ -135,7 +135,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       keywords: keywords_result,
       synonyms: synonyms_result,
       timestamp: timestamp_result,
-      link: linear16FilePath,
+      link: copy_path.replace(/\.[^/.]+$/, "_linear16_2.wav"),
       // 기타 필요한 파일 정보들 ..추가 -> erd보고 추가
     };
 
