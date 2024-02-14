@@ -116,7 +116,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
     //const extension = path.extname(req.file.originalname);
     //const mimeType = mime.getType(extension);
     const linear16FilePath = await convertToLinear16(copy_path);
-    const waveFile = new WaveFile(fs.readFileSync(linear16FilePath));
+    const waveFile = wav.decode(fs.readFileSync(linear16FilePath));
     // 채널 수 (Channels) 확인
     const channels = waveFile.fmt.numChannels;
     // bytesPerSample 계산
@@ -127,7 +127,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       filename: customName,
       content: fs.readFileSync(linear16FilePath), //req.file.buffer, // 바이너리 데이터로 저장
       mimeType: "audio/wav", //mimeType,
-      sampleRate: wav.decode(fs.readFileSync(linear16FilePath)).sampleRate, //sampleRate,
+      sampleRate: waveFile.sampleRate, //sampleRate,
       channels: channels,
       bytesPerSample: (bitsPerSample / 8) * channels,
       scripts: text_result,
