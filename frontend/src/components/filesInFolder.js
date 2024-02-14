@@ -46,7 +46,7 @@ const FilesInFolder = () => {
   const getContents = async (folderName) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/listUpFiles?folderName=${encodeURIComponent(
+        `http://52.78.157.198/listUpFiles?folderName=${encodeURIComponent(
           folderName
         )}`
       );
@@ -132,7 +132,7 @@ const FilesInFolder = () => {
         addFolder(newFolder);
       }
       const response = await axios.post(
-        "http://localhost:5000/create_folders",
+        "http://52.78.157.198/create_folders",
         { folderName: newFolderName },
         { headers: { "Content-Type": "application/json" } }
       );
