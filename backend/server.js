@@ -16,9 +16,14 @@ const ffmpegPath = require("ffmpeg-static");
 ffmpeg.setFfmpegPath(ffmpegPath);
 const wav = require("node-wav");
 const WaveFile = require("wavefile");
+const cookieParser = require("cookie-parser");
+const { User } = require("./models/User");
+const { auth } = require("./middleware/auth");
 
 const app = express();
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // CORS 미들웨어 추가
 app.use(cors());
@@ -26,6 +31,96 @@ app.use(cors());
 // MongoDB 연결
 mongoose.connect("mongodb://52.78.157.198:27017/keyloud");
 const conn = mongoose.connection;
+
+// 연결 성공 시
+conn.on("connected", () => {
+  console.log("MongoDB에 성공적으로 연결되었습니다.");
+});
+
+app.get("/", (req, res) => res.send("Hello world!!!!"));
+
+app.post("/register", async (req, res) => {
+  try {
+    // 회원가입을 할 때 필요한 것
+    // post로 넘어온 데이터를 받아서 DB에 저장해준다
+    const user = new User(req.body);
+    await user.save();
+
+    return res.status(200).json({ success: true });
+  } catch (err) {
+    return res.json({ success: false, err: err.message });
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    // 로그인을 할 때 아이디와 비밀번호를 받습니다.
+    const user = await User.findOne({ email: req.body.email }).exec();
+
+    if (!user) {
+      return res.json({
+        loginSuccess: false,
+        message: "존재하지 않는 아이디입니다.",
+      });
+    }
+
+    const isMatch = await user.comparePassword(req.body.password);
+
+    if (!isMatch) {
+      return res.json({
+        loginSuccess: false,
+        message: "비밀번호가 일치하지 않습니다",
+      });
+    }
+
+    // 비밀번호가 일치하면 토큰을 생성합니다.
+    // jwt 토큰 생성하는 메소드 작성
+    await user.generateToken();
+
+    res
+      .cookie("x_auth", user.token)
+      .status(200)
+      .json({ loginSuccess: true, userId: user._id });
+  } catch (err) {
+    res.status(400).json({ loginSuccess: false, err });
+  }
+});
+
+app.get("/auth", auth, (req, res) => {
+  //auth 미들웨어를 통과한 상태 이므로
+  //req.user에 user값을 넣어줬으므로
+  res.status(200).json({
+    _id: req._id,
+    isAdmin: req.user.role === 09 ? false : true,
+    isAuth: true,
+    email: req.user.email,
+    name: req.user.name,
+    lastname: req.user.lastname,
+    role: req.user.role,
+    image: req.user.image,
+  });
+});
+
+app.get("/logout", auth, async (req, res) => {
+  try {
+    const user = await User.findOneAndUpdate(
+      { _id: req.user._id },
+      { $set: { token: "" } },
+      { new: true }
+    ).exec();
+
+    if (!user) {
+      return res.json({ success: false, message: "사용자를 찾을 수 없습니다." });
+    }
+
+    res.clearCookie("x_auth");
+    return res.status(200).send({ success: true });
+  } catch (err) {
+    return res.json({ success: false, err });
+  }
+});
+
+
 
 app.post("/create_folders", async (req, res) => {
   const collection = conn.db.collection("folders");
