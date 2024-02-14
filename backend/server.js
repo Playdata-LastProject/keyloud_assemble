@@ -1,3 +1,5 @@
+process.env.GOOGLE_APPLICATION_CREDENTIALS = 'C:\\Users\\USER\\AppData\\Roaming\\gcloud\\application_default_credentials.json';
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const multer = require("multer");
@@ -15,10 +17,10 @@ const ffmpeg = require("fluent-ffmpeg");
 const ffmpegPath = require("ffmpeg-static");
 ffmpeg.setFfmpegPath(ffmpegPath);
 const wav = require("node-wav");
-const WaveFile = require("wavefile");
 const cookieParser = require("cookie-parser");
 const { User } = require("./models/User");
 const { auth } = require("./middleware/auth");
+const { WaveFile } = require('wavefile');
 
 const app = express();
 app.use(bodyParser.json());
@@ -222,7 +224,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       folderName: req.body.selectedFolder,
       filename: customName,
       content: fs.readFileSync(linear16FilePath), //req.file.buffer, // 바이너리 데이터로 저장
-      mimeType: "audio/wav", //mimeType,
+      mimeType: "audio/mpeg", //mimeType,
       sampleRate: wav.decode(fs.readFileSync(linear16FilePath)).sampleRate, //sampleRate,
       channels: channels,
       bytesPerSample: (bitsPerSample / 8) * channels,

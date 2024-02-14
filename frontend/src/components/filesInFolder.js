@@ -46,7 +46,7 @@ const FilesInFolder = () => {
   const getContents = async (folderName) => {
     try {
       const response = await axios.get(
-        `http://52.78.157.198:5000/listUpFiles?folderName=${encodeURIComponent(
+        `http://localhost:5000/listUpFiles?folderName=${encodeURIComponent(
           folderName
         )}`
       );
@@ -90,7 +90,7 @@ const FilesInFolder = () => {
       formData.append("customFileName", customFileName);
       formData.append("selectedFolder", selectedFolder);
 
-      const response = await fetch("http://52.78.157.198:5000/upload_files", {
+      const response = await fetch("http://localhos:5000/upload_files", {
         method: "POST",
         body: formData,
       });
@@ -132,7 +132,7 @@ const FilesInFolder = () => {
         addFolder(newFolder);
       }
       const response = await axios.post(
-        "http://52.78.157.198:5000/create_folders",
+        "http://localhost:5000/create_folders",
         { folderName: newFolderName },
         { headers: { "Content-Type": "application/json" } }
       );

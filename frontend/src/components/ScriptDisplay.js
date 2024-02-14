@@ -27,7 +27,7 @@ const ScriptDisplay = () => {
         setLoading(false);
         await getContents(location.state.data.filename);
         const response = await axios.get(
-          `http://52.78.157.198:5000/get_audio?filename=${encodeURIComponent(
+          `http://localhost:5000/get_audio?filename=${encodeURIComponent(
             location.state.data.filename
           )}`
         );
@@ -75,7 +75,7 @@ const ScriptDisplay = () => {
 
     try {
       const response = await axios.get(
-        `http://52.78.157.198:5000/contents?fileName=${encodeURIComponent(
+        `http://localhost:5000/contents?fileName=${encodeURIComponent(
           fileID
         )}`
       );
@@ -100,7 +100,7 @@ const ScriptDisplay = () => {
     // TODO: 파일 수정 로직 추가
     console.log(`Edit file: ${fileName}`);
 
-    const editEndpoint = "http://52.78.157.198:5000/update_scripts";
+    const editEndpoint = "http://localhost:5000/update_scripts";
 
     // Sample request using fetch
     fetch(editEndpoint, {
@@ -134,7 +134,7 @@ const ScriptDisplay = () => {
       // TODO: 파일 삭제 로직 추가
       console.log(`Delete file: ${filename}`);
 
-      const deleteEndpoint = "http://52.78.157.198:5000/move_to_trash";
+      const deleteEndpoint = "http://localhost:5000/move_to_trash";
 
       // Sample request using fetch
       axios
