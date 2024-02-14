@@ -135,6 +135,7 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       keywords: keywords_result,
       synonyms: synonyms_result,
       timestamp: timestamp_result,
+      link: linear16FilePath,
       // 기타 필요한 파일 정보들 ..추가 -> erd보고 추가
     };
 
@@ -403,6 +404,7 @@ app.get("/contents", async (req, res) => {
       keywords: 0,
       synonyms: 1,
       timestamp: 1,
+      link: 1,
     };
 
     const content = await collection.findOne(
