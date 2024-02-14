@@ -32,7 +32,9 @@ const Header = () => {
         <button className="icon-button">
           <FontAwesomeIcon icon={faCog} />
         </button>
-        <button className="login-button">로그인</button>
+        <Link to="/register"> {/* 회원가입 페이지로 이동 */}
+          <button className="login-button">로그인</button>
+        </Link>
       </div>
     </div>
   );

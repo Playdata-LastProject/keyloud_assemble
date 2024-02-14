@@ -1,13 +1,13 @@
-// LoginPage.js
 import React, { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import { useAppContext } from "../components/AppContext"; // 추가
+import { Link, useNavigate } from "react-router-dom";
+import { useAppContext } from "../AppContext";
 
-const LoginPage = ({ history }) => {
+const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { loginUser } = useAppContext(); // 추가
+  const { loginUser } = useAppContext();
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
@@ -18,7 +18,7 @@ const LoginPage = ({ history }) => {
 
       if (response.data && response.data.loginSuccess) {
         loginUser(response.data);
-        history.push("/"); // 로그인 성공 시 홈 화면으로 이동
+        navigate("/");
       } else {
         console.error("Login failed:", response.data.message);
       }
