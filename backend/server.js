@@ -15,7 +15,7 @@ const ffmpeg = require("fluent-ffmpeg");
 const ffmpegPath = require("ffmpeg-static");
 ffmpeg.setFfmpegPath(ffmpegPath);
 const wav = require("node-wav");
-const WaveFile = require("wavefile");
+const WaveFile = require("node-wav").WaveFile;
 
 const app = express();
 app.use(bodyParser.json());

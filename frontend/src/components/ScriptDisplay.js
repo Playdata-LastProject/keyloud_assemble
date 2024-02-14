@@ -40,7 +40,7 @@ const ScriptDisplay = () => {
   }, [location.state]);
 
   const handlePlay = () => {
-    /*if (audioData && Content) {
+    if (audioData && Content) {
       const bytesPerSample = Content.bytesPerSample; // 16비트 = 2바이트
       const sampleRate = Content.sampleRate; // 샘플 레이트 설정
 
@@ -67,7 +67,7 @@ const ScriptDisplay = () => {
 
       audioSource.connect(audioContext.destination);
       audioSource.start();
-    }*/
+    }
   };
 
   const getContents = async (fileID) => {
