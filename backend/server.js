@@ -12,8 +12,6 @@ const { searchInScript, searchInKeywords } = require("./searching");
 const mime = require("mime");
 const path = require("path");
 const ffmpeg = require("fluent-ffmpeg");
-const ffmpegPath = require("ffmpeg-static");
-ffmpeg.setFfmpegPath(ffmpegPath);
 const wav = require("node-wav");
 //const WaveFile = require("node-wav").WaveFile;
 
