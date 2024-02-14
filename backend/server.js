@@ -43,7 +43,8 @@ app.post("/register", async (req, res) => {
   try {
     // 회원가입을 할 때 필요한 것
     // post로 넘어온 데이터를 받아서 DB에 저장해준다
-    const user = new User(req.body);
+    const { email, password } = req.body;
+    const user = new User({ email, password });
     await user.save();
 
     return res.status(200).json({ success: true });

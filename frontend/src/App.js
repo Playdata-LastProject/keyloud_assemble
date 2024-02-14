@@ -10,9 +10,12 @@ import KeywordResult from "./components/KeywordResult.js"; // 추가
 import FileDetails from "./components/FileDetails.js"; // 추가
 import ScriptDisplay from "./components/ScriptDisplay.js"; // 추가
 import FilesInFolder from "./components/filesInFolder.js"; // 추가
+import LoginPage from "./components//LoginPage.js";
+import RegisterPage from "./components/RegisterPage.js";
+import { AppProvider } from "./AppContext";
 
 import "./App.css";
-import { AppProvider } from "./AppContext";
+
 
 const App = () => {
   return (
@@ -41,6 +44,8 @@ const App = () => {
                     path="/file-details/:fileName"
                     element={<FileDetails />}
                   />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/register" element={<RegisterPage />} />
                   <Route path="/trash" element={<TrashScreen />} />
                   <Route path="/details/:id" element={<ScriptDisplay />} />
                   <Route path="/files/:id" element={<FilesInFolder />} />
