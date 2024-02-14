@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+//import AudioPlayer from "react-audio-player";
 import "./styles/ScriptDisplay.css";
 import AudioPlayer from "react-audio-player";
 
@@ -170,8 +171,7 @@ const ScriptDisplay = () => {
         // 오디오 데이터가 존재하지 않는 경우의 처리
         <div>No audio data available</div>
       ) : (
-        /*<button onClick={handlePlay}>Play Audio</button>*/
-        <AudioPlayer src={Content.link} autoPlay controls />
+        <button onClick={handlePlay}>Play Audio</button>
       )}
       <p>script: {Content.scripts}</p>
       <div className="file-actions">
