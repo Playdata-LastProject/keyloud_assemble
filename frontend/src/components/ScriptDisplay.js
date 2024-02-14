@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import AudioPlayer from "react-audio-player";
 import "./styles/ScriptDisplay.css";
 import AudioPlayer from "react-audio-player";
 
