@@ -14,13 +14,8 @@ const { searchInScript, searchInKeywords } = require("./searching");
 const mime = require("mime");
 const path = require("path");
 const ffmpeg = require("fluent-ffmpeg");
-const ffmpegPath = require("ffmpeg-static");
-ffmpeg.setFfmpegPath(ffmpegPath);
 const wav = require("node-wav");
-const cookieParser = require("cookie-parser");
-const { User } = require("./models/User");
-const { auth } = require("./middleware/auth");
-const { WaveFile } = require('wavefile');
+const WaveFile = require("wavefile");
 
 const app = express();
 app.use(bodyParser.json());
@@ -214,17 +209,18 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
     //const extension = path.extname(req.file.originalname);
     //const mimeType = mime.getType(extension);
     const linear16FilePath = await convertToLinear16(copy_path);
-    const waveFile = new WaveFile(fs.readFileSync(linear16FilePath));
+    //const waveFile = wav.decode(fs.readFileSync(linear16FilePath));
+    const waveFileData = wav.decode(fs.readFileSync(linear16FilePath));
     // 채널 수 (Channels) 확인
-    const channels = waveFile.fmt.numChannels;
+    const channels = waveFileData.fmt.numChannels;
     // bytesPerSample 계산
-    const bitsPerSample = waveFile.fmt.bitsPerSample;
+    const bitsPerSample = waveFileData.fmt.bitsPerSample;
     // 파일이 업로드된 후의 처리
     const fileDetails = {
       folderName: req.body.selectedFolder,
       filename: customName,
       content: fs.readFileSync(linear16FilePath), //req.file.buffer, // 바이너리 데이터로 저장
-      mimeType: "audio/mpeg", //mimeType,
+      mimeType: "audio/wav", //mimeType,
       sampleRate: wav.decode(fs.readFileSync(linear16FilePath)).sampleRate, //sampleRate,
       channels: channels,
       bytesPerSample: (bitsPerSample / 8) * channels,
@@ -233,7 +229,6 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       keywords: keywords_result,
       synonyms: synonyms_result,
       timestamp: timestamp_result,
-      //link: copy_path.replace(/\.[^/.]+$/, "_linear16_2.wav"),
       // 기타 필요한 파일 정보들 ..추가 -> erd보고 추가
     };
 
@@ -502,7 +497,6 @@ app.get("/contents", async (req, res) => {
       keywords: 0,
       synonyms: 1,
       timestamp: 1,
-      //link: 1,
     };
 
     const content = await collection.findOne(
