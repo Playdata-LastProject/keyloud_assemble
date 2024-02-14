@@ -11,7 +11,7 @@ const RegisterPage = ({ history }) => {
 
   const handleRegister = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/register", {
+      const response = await axios.post("http://52.78.157.198/register", {
         email,
         password,
       });

@@ -42,7 +42,7 @@ const KeywordSearchPage = () => {
 
     try {
       const response = await axios.get(
-        `http://localhost:5000/keyword_search?keyword=${encodeURIComponent(
+        `http://52.78.157.198/keyword_search?keyword=${encodeURIComponent(
           searchKeyword
         )}`
       );
