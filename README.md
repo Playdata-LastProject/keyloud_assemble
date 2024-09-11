@@ -37,6 +37,7 @@ npm start
 ![image](https://github.com/user-attachments/assets/935eedc1-0271-46aa-9965-99ec48d4a205)
 
 ## 개발 포인트
+- front와 back의 개발환경 통일성을 위해 React와 Express 채택
 - GitHub Flow 전략
   - main: 항상 배포 가능한 상태를 유지하는 브랜치입니다.
   - feature: 새로운 기능이나 버그 수정을 위한 브랜치입니다. main에서 분기하고, 작업 완료 후 main에 Pull Request를 생성하여 병합합니다.
