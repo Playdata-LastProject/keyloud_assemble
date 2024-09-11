@@ -23,7 +23,8 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // MongoDB 연결
-mongoose.connect("mongodb://52.78.157.198:27017/keyloud");
+//mongoose.connect("mongodb://52.78.157.198:27017/keyloud"); -> aws용
+mongoose.connect("mongodb://0.0.0.0:27017/keyloud");
 const conn = mongoose.connection;
 
 app.post("/create_folders", async (req, res) => {
