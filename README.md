@@ -35,3 +35,15 @@ npm start
 ## Development Flow
 ![image](https://github.com/user-attachments/assets/935eedc1-0271-46aa-9965-99ec48d4a205)
 
+## 개발 포인트
+- GitHub Flow 전략
+  - main: 항상 배포 가능한 상태를 유지하는 브랜치입니다.
+  - feature: 새로운 기능이나 버그 수정을 위한 브랜치입니다. main에서 분기하고, 작업 완료 후 main에 Pull Request를 생성하여 병합합니다.
+  - 작업 단위를 더 잘게 쪼개어, 더 자주 커밋하고 병합합니다.
+  - 선택 이유
+    - 브랜치 관리에 드는 시간과 노력이 절약되어, 6주간의 짧은 프로젝트에 적합하다고 판단
+    - 기능 단위 PR을 통해 merge충돌을 방지하며 배포 브랜치 유지
+- Google Cloud VertexAI
+  - Keyword 추출을 위한 VertexAI API 연동
+  - 음성 data -> text data 변환을 위한 speech2Text API 연동
+
