@@ -1,3 +1,5 @@
+process.env.GOOGLE_APPLICATION_CREDENTIALS = 'C:\\Users\\USER\\AppData\\Roaming\\gcloud\\application_default_credentials.json';
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const multer = require("multer");
@@ -12,13 +14,13 @@ const { searchInScript, searchInKeywords } = require("./searching");
 const mime = require("mime");
 const path = require("path");
 const ffmpeg = require("fluent-ffmpeg");
-const ffmpegPath = require("ffmpeg-static");
-ffmpeg.setFfmpegPath(ffmpegPath);
 const wav = require("node-wav");
-const WaveFile = require("node-wav").WaveFile;
+const WaveFile = require("wavefile");
 
 const app = express();
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // CORS 미들웨어 추가
 app.use(cors());
@@ -27,6 +29,97 @@ app.use(cors());
 //mongoose.connect("mongodb://52.78.157.198:27017/keyloud"); -> aws용
 mongoose.connect("mongodb://0.0.0.0:27017/keyloud");
 const conn = mongoose.connection;
+
+// 연결 성공 시
+conn.on("connected", () => {
+  console.log("MongoDB에 성공적으로 연결되었습니다.");
+});
+
+app.get("/", (req, res) => res.send("Hello world!!!!"));
+
+app.post("/register", async (req, res) => {
+  try {
+    // 회원가입을 할 때 필요한 것
+    // post로 넘어온 데이터를 받아서 DB에 저장해준다
+    const { email, password } = req.body;
+    const user = new User({ email, password });
+    await user.save();
+
+    return res.status(200).json({ success: true });
+  } catch (err) {
+    return res.json({ success: false, err: err.message });
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    // 로그인을 할 때 아이디와 비밀번호를 받습니다.
+    const user = await User.findOne({ email: req.body.email }).exec();
+
+    if (!user) {
+      return res.json({
+        loginSuccess: false,
+        message: "존재하지 않는 아이디입니다.",
+      });
+    }
+
+    const isMatch = await user.comparePassword(req.body.password);
+
+    if (!isMatch) {
+      return res.json({
+        loginSuccess: false,
+        message: "비밀번호가 일치하지 않습니다",
+      });
+    }
+
+    // 비밀번호가 일치하면 토큰을 생성합니다.
+    // jwt 토큰 생성하는 메소드 작성
+    await user.generateToken();
+
+    res
+      .cookie("x_auth", user.token)
+      .status(200)
+      .json({ loginSuccess: true, userId: user._id });
+  } catch (err) {
+    res.status(400).json({ loginSuccess: false, err });
+  }
+});
+
+app.get("/auth", auth, (req, res) => {
+  //auth 미들웨어를 통과한 상태 이므로
+  //req.user에 user값을 넣어줬으므로
+  res.status(200).json({
+    _id: req._id,
+    isAdmin: req.user.role === 09 ? false : true,
+    isAuth: true,
+    email: req.user.email,
+    name: req.user.name,
+    lastname: req.user.lastname,
+    role: req.user.role,
+    image: req.user.image,
+  });
+});
+
+app.get("/logout", auth, async (req, res) => {
+  try {
+    const user = await User.findOneAndUpdate(
+      { _id: req.user._id },
+      { $set: { token: "" } },
+      { new: true }
+    ).exec();
+
+    if (!user) {
+      return res.json({ success: false, message: "사용자를 찾을 수 없습니다." });
+    }
+
+    res.clearCookie("x_auth");
+    return res.status(200).send({ success: true });
+  } catch (err) {
+    return res.json({ success: false, err });
+  }
+});
+
+
 
 app.post("/create_folders", async (req, res) => {
   const collection = conn.db.collection("folders");
@@ -117,11 +210,12 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
     //const extension = path.extname(req.file.originalname);
     //const mimeType = mime.getType(extension);
     const linear16FilePath = await convertToLinear16(copy_path);
-    const waveFile = new WaveFile(fs.readFileSync(linear16FilePath));
+    //const waveFile = wav.decode(fs.readFileSync(linear16FilePath));
+    const waveFileData = wav.decode(fs.readFileSync(linear16FilePath));
     // 채널 수 (Channels) 확인
-    const channels = waveFile.fmt.numChannels;
+    const channels = waveFileData.fmt.numChannels;
     // bytesPerSample 계산
-    const bitsPerSample = waveFile.fmt.bitsPerSample;
+    const bitsPerSample = waveFileData.fmt.bitsPerSample;
     // 파일이 업로드된 후의 처리
     const fileDetails = {
       folderName: req.body.selectedFolder,

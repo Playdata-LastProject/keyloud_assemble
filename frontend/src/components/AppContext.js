@@ -3,7 +3,11 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 
 export const AppContext = createContext();
 export const useAppContext = () => {
-  return useContext(AppContext);
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error('useAppContext must be used within an AppProvider');
+  }
+  return context;
 };
 
 export const AppProvider = ({ children }) => {
