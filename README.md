@@ -30,14 +30,14 @@ npm start
 ## Service Flow
 <img src="https://github.com/user-attachments/assets/6b5275f1-9ba3-4160-807f-30d8e913c631"  width="1000" height="400"/>
 
-- ❌파일 업로드 기능은 현재 Google Cloud credit 이슈로 사용불가
-- ❌local 환경에서 실행시 Google Cloud 인증 Issue 발생할 수 있음
+❌파일 업로드 기능은 현재 Google Cloud credit 이슈로 사용불가
+❌local 환경에서 실행시 Google Cloud 인증 Issue 발생할 수 있음
 
 ## Development Flow
 ![image](https://github.com/user-attachments/assets/935eedc1-0271-46aa-9965-99ec48d4a205)
 
-- ✔️ 비동기 처리를 통한 빠른 AI API호출 및 빠른 서비스 개발을 위해 Express 채택
-- ✔️ front와 back의 개발 통일성을 위해 React와 Express 채택
+✔️ 비동기 처리를 통한 빠른 AI API호출 및 빠른 서비스 개발을 위해 Express 채택
+✔️ front와 back의 개발 통일성을 위해 React와 Express 채택
 
 ## 📌개발 포인트
 - GitHub Flow 전략
