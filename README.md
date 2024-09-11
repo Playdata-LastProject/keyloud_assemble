@@ -31,6 +31,7 @@ npm start
 <img src="https://github.com/user-attachments/assets/6b5275f1-9ba3-4160-807f-30d8e913c631"  width="1000" height="400"/>
 
 - 파일 업로드 기능은 현재 Google Cloud credit 이슈로 사용불가
+- local 환경에서 실행시 Google Cloud 인증 Issue 발생할 수 있음
 
 ## Development Flow
 ![image](https://github.com/user-attachments/assets/935eedc1-0271-46aa-9965-99ec48d4a205)
@@ -43,6 +44,7 @@ npm start
   - 선택 이유
     - 브랜치 관리에 드는 시간과 노력이 절약되어, 6주간의 짧은 프로젝트에 적합하다고 판단
     - 기능 단위 PR을 통해 merge충돌을 방지하며 배포 브랜치 유지
+  
 - Google Cloud VertexAI
   - Keyword 추출을 위한 VertexAI API 연동
   - 음성 data -> text data 변환을 위한 speech2Text API 연동
