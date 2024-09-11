@@ -15,6 +15,7 @@ const ffmpeg = require("fluent-ffmpeg");
 const ffmpegPath = require("ffmpeg-static");
 ffmpeg.setFfmpegPath(ffmpegPath);
 const wav = require("node-wav");
+const WaveFile = require("node-wav").WaveFile;
 
 const app = express();
 app.use(bodyParser.json());
@@ -116,13 +117,20 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
     //const extension = path.extname(req.file.originalname);
     //const mimeType = mime.getType(extension);
     const linear16FilePath = await convertToLinear16(copy_path);
+    const waveFile = new WaveFile(fs.readFileSync(linear16FilePath));
+    // 채널 수 (Channels) 확인
+    const channels = waveFile.fmt.numChannels;
+    // bytesPerSample 계산
+    const bitsPerSample = waveFile.fmt.bitsPerSample;
     // 파일이 업로드된 후의 처리
     const fileDetails = {
       folderName: req.body.selectedFolder,
       filename: customName,
       content: fs.readFileSync(linear16FilePath), //req.file.buffer, // 바이너리 데이터로 저장
       mimeType: "audio/wav", //mimeType,
-      sampleRate: wav.decode(linear16FilePath).sampleRate, //sampleRate,
+      sampleRate: wav.decode(fs.readFileSync(linear16FilePath)).sampleRate, //sampleRate,
+      channels: channels,
+      bytesPerSample: (bitsPerSample / 8) * channels,
       scripts: text_result,
       summary: summary_result,
       keywords: keywords_result,
@@ -389,6 +397,8 @@ app.get("/contents", async (req, res) => {
       content: 1,
       mimeType: 1,
       sampleRate: 1,
+      channels: 1,
+      bytesPerSample: 1,
       scripts: 1,
       summary: 1,
       keywords: 0,
@@ -421,8 +431,8 @@ app.get("/get_audio", async (req, res) => {
       mimeType: { $exists: true },
     });
     // 파일의 MIME 타입에 따라 Content-Type 설정
-    const MIME = results.mimeType;
-    res.setHeader("Content-Type", MIME); // 예시로 'audio/*/
+    //const MIME = results.mimeType;
+    //res.setHeader("Content-Type", MIME); // 예시로 'audio/*/
     res.send(results.content);
   } catch (error) {
     console.error("Error retrieving file:", error);
