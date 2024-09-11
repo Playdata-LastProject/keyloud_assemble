@@ -136,7 +136,6 @@ app.post("/upload_files", multer().single("files"), async (req, res) => {
       keywords: keywords_result,
       synonyms: synonyms_result,
       timestamp: timestamp_result,
-      // 기타 필요한 파일 정보들 ..추가 -> erd보고 추가
     };
 
     // MongoDB에 파일 정보 저장
