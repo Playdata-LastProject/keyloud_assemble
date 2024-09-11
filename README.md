@@ -7,7 +7,7 @@
 ## Install
 git clone
 ```bash
-git clone
+git clone https://github.com/Playdata-LastProject/keyloud_assemble.git
 cd keyloud_assemble
 ```
 run mongodb
